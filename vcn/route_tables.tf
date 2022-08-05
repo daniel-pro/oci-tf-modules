@@ -5,8 +5,8 @@ resource "oci_core_route_table" "route_table" {
   display_name   = lookup(each.value, "name", each.key)
   vcn_id         = oci_core_vcn.vcn.id
 
-  freeform_tags = var.freeform_tags
-  defined_tags = var.defined_tags
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 
   dynamic route_rules {
       for_each = lookup(each.value, "route_rules", {})

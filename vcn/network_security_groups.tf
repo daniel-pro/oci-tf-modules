@@ -8,8 +8,8 @@ resource "oci_core_network_security_group" "network_security_group" {
     #Optional
     display_name   = lookup(each.value, "name", each.key)
 
-    defined_tags   = lookup(each.value, "defined_tags", null)
-    freeform_tags  = lookup(each.value, "freeform_tags", null)
+    freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+    defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 }
 
 

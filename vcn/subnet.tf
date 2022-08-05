@@ -11,16 +11,13 @@ resource "oci_core_subnet" "vcn_subnet" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.vcn.id
 
-
-  defined_tags    = var.defined_tags
   dhcp_options_id = oci_core_dhcp_options.dhcp_options[each.value.dhcp_options].id
   display_name    = lookup(each.value, "name", each.key)
   dns_label       = lookup(each.value, "dns_label", null)
-  freeform_tags   = var.freeform_tags
-  #commented for IPV6 support
-  #ipv6cidr_block             = var.enable_ipv6 == false ? null : each.value.ipv6cidr_block
-  #ipv6cidr_blocks            = var.enable_ipv6 == false ? null : [each.value.ipv6cidr_block]
-  #prohibit_internet_ingress  = var.enable_ipv6 && lookup(each.value,"type","public") == "public" ? each.value.prohibit_internet_ingress : false
+  
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
+
   prohibit_public_ip_on_vnic = lookup(each.value, "type", "public") == "public" ? false : true
   route_table_id             = oci_core_route_table.route_table[each.value.route_table].id
   security_list_ids          = matchkeys(([for seclist, value in oci_core_security_list.security_list: value.id]),  keys(var.security_lists), lookup(each.value, "security_lists", []) )

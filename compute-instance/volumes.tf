@@ -30,10 +30,10 @@ resource "oci_core_volume" "volume" {
   for_each = var.block_volumes
   availability_domain = oci_core_instance.instance[each.value.instance_name_to_attach_to].availability_domain
   compartment_id      = each.value.compartment_id
-  display_name        = can(each.value.name) ? each.value.name : each.key
+  display_name        = lookup(each.value, "name", each.key)
   size_in_gbs         = each.value.size_in_gbs
-  freeform_tags = local.merged_freeform_tags
-  defined_tags  = var.defined_tags
+  freeform_tags       = lookup(each.value, "freeform_tags", null)
+  defined_tags        = lookup(each.value, "defined_tags", null)
   dynamic block_volume_replicas {
     for_each = can(each.value.replicas) ? each.value.replicas : {}
     content {

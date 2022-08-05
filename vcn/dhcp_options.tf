@@ -16,5 +16,7 @@ resource "oci_core_dhcp_options" "dhcp_options" {
 
     vcn_id = oci_core_vcn.vcn.id
 
-    display_name    = lookup(each.value, "name", each.key)
+    display_name  = lookup(each.value, "name", each.key)
+    freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+    defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 }

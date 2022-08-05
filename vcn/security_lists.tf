@@ -15,7 +15,9 @@ resource "oci_core_security_list" "security_list" {
     compartment_id = var.compartment_id
     vcn_id         = oci_core_vcn.vcn.id
 
-
+    freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+    defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
+    
     display_name   = lookup(each.value, "name", each.key)
     dynamic ingress_security_rules {
 

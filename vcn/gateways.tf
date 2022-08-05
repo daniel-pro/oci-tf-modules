@@ -7,8 +7,8 @@ resource "oci_core_internet_gateway" "internet_gateway" {
   compartment_id = var.compartment_id
   display_name   = lookup(each.value, "name", each.key) 
 
-  freeform_tags = var.freeform_tags
-  defined_tags = var.defined_tags
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 
   vcn_id = oci_core_vcn.vcn.id
 
@@ -19,8 +19,8 @@ resource "oci_core_service_gateway" "service_gateway" {
   compartment_id = var.compartment_id
   display_name   = lookup(each.value, "name", each.key) 
 
-  freeform_tags = var.freeform_tags
-  defined_tags = var.defined_tags
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 
   services {
     service_id = lookup(data.oci_core_services.all_oci_services[lookup(each.value, "name", each.key)].services[0], "id")
@@ -38,8 +38,8 @@ resource "oci_core_nat_gateway" "nat_gateway" {
 
   compartment_id = var.compartment_id
   display_name   = lookup(each.value, "name", each.key) 
-  freeform_tags = var.freeform_tags
-  defined_tags = var.defined_tags
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 
   public_ip_id = var.nat_gateway_public_ip_id != "none" ? var.nat_gateway_public_ip_id : null
 
@@ -70,12 +70,13 @@ resource "oci_core_local_peering_gateway" "lpg" {
   compartment_id = var.compartment_id
   display_name   = each.key
 
-  freeform_tags = var.freeform_tags
-  defined_tags = var.defined_tags
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 
   vcn_id = oci_core_vcn.vcn.id
 
   #Optional
   peer_id        = can(each.value.peer_id) == false ? null : each.value.peer_id
   route_table_id = can(each.value.route_table_id) == false ? null : each.value.route_table_id
+
 }
