@@ -25,3 +25,4 @@ resource "oci_identity_tag" "identity_tag" {
         }
     }
 }
+
