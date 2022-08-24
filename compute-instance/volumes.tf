@@ -59,28 +59,30 @@ resource "oci_core_volume_attachment" "volume_attachment" {
 
 
 
-### resource "oci_core_volume_group" "volume_group" {
-###     for_each = var.volume_groups
-###     #Required 
-###     availability_domain = oci_core_instance.instance[each.value.boot_volumes_of_instances[0]].availability_domain
-###     compartment_id = var.compartment_id
-###     source_details {
-###         #Required
-###         type = "volumeIds"
-###         volume_ids = [can(each.value.boot_volumes_of_instances) ? [ for i in each.value.boot_volumes_of_instances : oci_core_instance.instance[i].boot_volume_id ] : [], can(each.value.volumes) ? oci_core_volume.volume[each.value.volumes].id : [] ]
-### 
-###     }
-### 
-###     #Optional
-###     backup_policy_id = data.oci_core_volume_backup_policies.test_volume_backup_policies.volume_backup_policies.0.id
-###     defined_tags = {"Operations.CostCenter"= "42"}
-###     display_name = var.volume_group_display_name
-###     freeform_tags = {"Department"= "Finance"}
-###     volume_group_replicas {
-###         #Required
-###         availability_domain = var.volume_group_volume_group_replicas_availability_domain
-### 
-###         #Optional
-###         display_name = var.volume_group_volume_group_replicas_display_name
-###     }
-### }
+resource "oci_core_volume_group" "volume_group" {
+    for_each = var.volume_groups
+    #Required 
+    availability_domain = (can(each.value.boot_volumes_of_instances) ? oci_core_instance.instance[each.value.boot_volumes_of_instances[0]].availability_domain : can(each.value.volumes) ? oci_core_volume.volume[each.value.volumes[0]].id : null )
+    compartment_id = var.compartment_id
+    source_details {
+        #Required
+        type = "volumeIds"
+        volume_ids = concat((can(each.value.boot_volumes_of_instances) ? [ for i in each.value.boot_volumes_of_instances : oci_core_instance.instance[i].boot_volume_id ] : []), can(each.value.volumes) ? [ for i in each.value.volumes : oci_core_volume.volume[i].id ] : [])
+    }
+
+    #Optional
+    backup_policy_id = can(each.value.backup_policy) ? local.backup_policies[each.value.backup_policy] : null
+    freeform_tags    = lookup(each.value, "freeform_tags", null)
+    defined_tags     = lookup(each.value, "defined_tags", null)
+    display_name     = lookup(each.value, "name", each.key)
+    dynamic volume_group_replicas {
+      for_each = { for key, value in each.value: key => value if key == "volume_group_replicas" }
+      content {
+        #Required
+        availability_domain = volume_group_replicas.value.availability_domain
+
+        #Optional
+        display_name =  lookup(volume_group_replicas.value, "name", null)
+      }
+    }
+}
