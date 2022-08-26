@@ -11,7 +11,7 @@ resource "oci_core_vcn" "vcn" {
 
 
 resource "oci_core_drg_attachment" "drg_vcn_attachment" {
-  for_each = var.drg_vcn_attachment
+  for_each     = var.drg_vcn_attachment
   display_name = "${each.value.drg_name}-to-${oci_core_vcn.vcn.display_name}"
 
   freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
@@ -20,9 +20,9 @@ resource "oci_core_drg_attachment" "drg_vcn_attachment" {
   drg_id = each.value.drg_id
 
   network_details {
-    id             = oci_core_vcn.vcn.id                                                                        # required
+    id             = oci_core_vcn.vcn.id                                                                     # required
     route_table_id = can(each.value.vcn_transit_routing_rt_id) ? each.value.vcn_transit_routing_rt_id : null # optional. Only needed when using VCN Transit Routing or Network Appliance service chaining
-    type           = "VCN"                                                                                      # Required
+    type           = "VCN"                                                                                   # Required
   }
 
   drg_route_table_id = can(each.value.drg_route_table_id) ? each.value.drg_route_table_id : null # (Optional) (Updatable) string

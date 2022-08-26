@@ -1,7 +1,7 @@
 variable "compartment_id" {
-  type = string
+  type        = string
   description = "The ID of the compartment where the bucket will be created in"
-  default = null
+  default     = null
 }
 
 variable "buckets" {

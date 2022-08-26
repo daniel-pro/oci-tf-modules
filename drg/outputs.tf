@@ -27,7 +27,7 @@ output "drg_all_attributes" {
 
 output "rpc_ids" {
   description = "id of RPC if it is created"
-  value       = [for c in oci_core_remote_peering_connection.rpc[*]: {for k, v in c : k => v.id}] 
+  value       = [for c in oci_core_remote_peering_connection.rpc[*] : { for k, v in c : k => v.id }]
 }
 
 output "rpc_all_attributes" {

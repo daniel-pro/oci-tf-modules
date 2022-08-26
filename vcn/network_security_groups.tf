@@ -1,15 +1,15 @@
 resource "oci_core_network_security_group" "network_security_group" {
-    for_each       = var.network_security_groups
+  for_each = var.network_security_groups
 
-    #Required
-    compartment_id = var.compartment_id
-    vcn_id         = oci_core_vcn.vcn.id
+  #Required
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.vcn.id
 
-    #Optional
-    display_name   = lookup(each.value, "name", each.key)
+  #Optional
+  display_name = lookup(each.value, "name", each.key)
 
-    freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
-    defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
+  freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
+  defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)
 }
 
 
@@ -20,7 +20,7 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
         nsg_key     = key
         secrule_key = key_sr
         secrule     = secrule
-      } 
+      }
     ]
     ]) : "${k.nsg_key}_${k.secrule_key}" => k
   }
@@ -56,7 +56,7 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
   }
 
   dynamic "icmp_options" {
-    for_each =  lookup(each.value.secrule, "icmp_options", []) 
+    for_each = lookup(each.value.secrule, "icmp_options", [])
     content {
       type = icmp_options.value.type
       code = icmp_options.value.code
@@ -64,7 +64,7 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
   }
 
   dynamic "udp_options" {
-    for_each =  lookup(each.value.secrule, "udp_options", [])
+    for_each = lookup(each.value.secrule, "udp_options", [])
     content {
       dynamic "source_port_range" {
         for_each = udp_options.value.source_port_range[*]

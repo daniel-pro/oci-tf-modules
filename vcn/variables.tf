@@ -239,8 +239,8 @@ variable "dhcp_options" {
 
 variable "rpc_acceptor_id" {
   description = "the ID of the remote RPC"
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 variable "rpc_acceptor_region" {
   # List of regions: https://docs.cloud.oracle.com/iaas/Content/General/Concepts/regions.htm#ServiceAvailabilityAcrossRegions
