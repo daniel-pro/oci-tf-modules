@@ -5,7 +5,7 @@ variable "compartment_id" {
 
 variable "dynamic_groups" {
   description = "The map of all dynamic groups to be created."
-  type        = none
+  type        = any
   default     = {}
 }
 
