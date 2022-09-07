@@ -20,7 +20,7 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
 
     #Optional
     dynamic actions {
-        for_each = { for key, value in each.value : key => value if key == "actions" }
+        for_each = lookup(each.value, "actions", {}) 
         #Required
         content {
             name = actions.value.name
@@ -28,16 +28,16 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
 
             #Optional
             dynamic body {
-            for_each = { for key, value in each.value.actions : key => value if key == "body" }
+            for_each = { for key, value in actions.value : key => value if key == "body" }
                 content {
                     #Required
                     text = body.value.text
                     type = body.value.type
                 }
             }
-            code = lookup(actions.value, "code", "401")
+            code = lookup(actions.value, "code", null)
             dynamic headers {
-            for_each = { for key, value in each.value.actions : key => value if key == "headers" }
+            for_each = lookup(actions.value, "headers", {}) 
                 content {
                     #Optional
                     name = lookup(headers.value, "name", null)
@@ -58,7 +58,7 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
 
             #Optional
             dynamic rules {
-            for_each = { for key, value in each.value : key => value if key == "rules" }
+            for_each =  lookup(request_access_control.value, "rules", {}) 
                 content {
                     #Required
                     action_name = rules.value.action_name
@@ -79,44 +79,47 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
             body_inspection_size_limit_exceeded_action_name = lookup(request_protection.value, "body_inspection_size_limit_exceeded_action_name", null)
             body_inspection_size_limit_in_bytes = lookup(request_protection.value, "body_inspection_size_limit_in_bytes", null)
             dynamic rules {
-                for_each = { for key, value in request_protection.value : key => value if key == "rules" }
+                for_each =  lookup(request_protection.value, "rules", {}) 
                 content {
                     #Required
                     action_name = rules.value.action_name
                     name = rules.value.name
-                    protection_capabilities {
+                    dynamic protection_capabilities {
+                        for_each =  lookup(rules.value, "protection_capabilities", {}) 
+                        content {
                         #Required
-                        key = rules.value.protection_capabilities.key
-                        version = rules.value.protection_capabilities.version
+                            key = protection_capabilities.key
+                            version = protection_capabilities.value.version
 
-                        #Optional
-                        action_name = lookup(rules.value.protection_capabilities, "action_name", null)
-                        collaborative_action_threshold = lookup(rules.value.protection_capabilities, "collaborative_action_threshold", null)
-                        dynamic collaborative_weights {
-                            for_each = { for key, value in rules.value.protection_capabilities : key => value if key == "collaborative_weights" }
-                            content {
-                                #Required
-                                key = collaborative_weights.key
-                                weight = collaborative_weights.value.weight
+                            #Optional
+                            action_name = lookup(rules.value.protection_capabilities, "action_name", null)
+                            collaborative_action_threshold = lookup(rules.value.protection_capabilities, "collaborative_action_threshold", null)
+                            dynamic collaborative_weights {
+                                for_each =  lookup(rules.value.protection_capabilities, "collaborative_weights", {}) 
+                                content {
+                                    #Required
+                                    key = collaborative_weights.key
+                                    weight = collaborative_weights.value.weight
+                                }
                             }
-                        }
-                        dynamic exclusions {
-                            for_each = { for key, value in rules.value.protection_capabilities : key => value if key == "exclusions" }
-                            content {
-                                #Optional
-                                args = lookup(exclusions.value, "args", null)
-                                request_cookies = lookup(exclusions.value, "request_cookies", null)
+                            dynamic exclusions {                                
+                                for_each =  lookup(rules.value.protection_capabilities, "exclusions", {}) 
+                                content {
+                                    #Optional
+                                    args = lookup(exclusions.value, "args", null)
+                                    request_cookies = lookup(exclusions.value, "request_cookies", null)
+                                }
                             }
                         }
                     }
-                    type = protection_rules.value.type # Can be either ACCESS_CONTROL, PROTECTION or REQUEST_RATE_LIMITING
+                    type = rules.value.type # Can be either ACCESS_CONTROL, PROTECTION or REQUEST_RATE_LIMITING
 
                     #Optional
                     condition = lookup(rules.value, "condition", null)
                     condition_language = lookup(rules.value, "condition_language", null)
                     is_body_inspection_enabled = lookup(rules.value, "is_body_inspection_enabled", null)
                     dynamic protection_capability_settings {
-                        for_each = { for key, value in rules.value : key => value if key == "protection_capability_settings" }
+                        for_each =  lookup(rules.value, "protection_capability_settings", {}) 
                         content {
                             #Optional
                             allowed_http_methods = lookup(protection_capability_settings.value, "allowed_http_methods", null)
@@ -132,16 +135,16 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
         }
     }
     dynamic request_rate_limiting {
-        for_each = { for key, value in each.value : key => value if key == "request_rate_limiting" }
+        for_each =  lookup(each.value, "request_rate_limiting", {}) 
         content {
             #Optional
             dynamic rules {
-                for_each = { for key, value in request_rate_limiting.value : key => value if key == "rules" }
+                for_each =  lookup(request_rate_limiting.value, "rules", {}) 
                 content {
                     #Required
                     action_name = rules.value.action_name
                     dynamic configurations {
-                        for_each = { for key, value in rules.value : key => value if key == "configurations" }
+                        for_each =  lookup(rules.value, "configurations", {}) 
                         content {
                             #Required
                             period_in_seconds = configurations.value.period_in_seconds
@@ -162,11 +165,11 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
         }
     }
     dynamic response_access_control {
-        for_each = { for key, value in each.value : key => value if key == "response_access_control" }
+        for_each =  lookup(each.value, "response_access_control", {}) 
         content {
             #Optional
             dynamic rules {
-                for_each = { for key, value in response_access_control.value : key => value if key == "rules" }
+                for_each =  lookup(response_access_control.value, "rules", {}) 
                 content {
                     #Required
                     action_name = rules.value.action_name
@@ -181,17 +184,17 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
         }
     }
     dynamic response_protection {
-        for_each = { for key, value in each.value : key => value if key == "response_protection" }
+        for_each =  lookup(each.value, "response_protection", {}) 
         content {
             #Optional
             dynamic rules {
-                for_each = { for key, value in response_protection.value : key => value if key == "rules" }
+                for_each =  lookup(response_protection.value, "rules", {})
                 content {
                     #Required
                     action_name = rules.value.action_name
                     name = rules.value.name
                     dynamic protection_capabilities {
-                        for_each = { for key, value in rules.value : key => value if key == "protection_capabilities" }
+                        for_each =  lookup(rules.value, "protection_capabilities", {})
                         #Required
                         content {
                             key = protection_capabilities.key
@@ -201,7 +204,7 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
                             action_name = lookup(protection_capabilities.value, "action_name", null)
                             collaborative_action_threshold = lookup(protection_capabilities.value, "collaborative_action_threshold", null)
                             dynamic collaborative_weights {
-                                for_each = { for key, value in protection_capabilities.value : key => value if key == "collaborative_weights" }
+                                for_each =  lookup(protection_capabilities.value, "collaborative_weights", {})
                                 content {
                                     #Required
                                     key = collaborative_weights.key
@@ -209,7 +212,7 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
                                 }
                             }
                             dynamic exclusions {
-                                for_each = { for key, value in protection_capabilities.value : key => value if key == "exclusions" }
+                                for_each =  lookup(protection_capabilities.value, "exclusions", {})
                                 content {
                                     #Optional
                                     args = lookup(exclusions.value, "args", null)
@@ -225,7 +228,7 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
                     condition_language = lookup(rules.value, "condition_language", null)
                     is_body_inspection_enabled = lookup(rules.value, "is_body_inspection_enabled", null)
                     dynamic protection_capability_settings {
-                        for_each = { for key, value in rules.value : key => value if key == "protection_capability_settings" }
+                        for_each =  lookup(rules.value, "protection_capability_settings", {})
                         content {
                             #Optional
                             allowed_http_methods = lookup(protection_capability_settings.value, "allowed_http_methods", null)
@@ -241,4 +244,11 @@ resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
         }
     }
     system_tags = lookup(each.value, "system_tags", null)
+}
+
+data "oci_waf_protection_capabilities" "recommended_protection_capabilities" {
+    #Required
+    compartment_id = var.compartment_id
+    #Optional
+    group_tag = ["Recommended"]
 }
