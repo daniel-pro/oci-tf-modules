@@ -21,14 +21,20 @@ variable "volume_backup_policies" {
   default     = {}
 }
 
-variable "boot_volumes_backup_policies" {
-  description = "Map of boot volume backup policies to be created"
+variable "boot_volumes_backup_policy_assignments" {
+  description = "Map of boot volume backup policy assignments to be created"
   type        = any
   default     = {}
 }
 
 variable "volume_groups" {
   description = "Map of volume groups to be created"
+  type        = any
+  default     = {}
+}
+
+variable "volume_backup_policy_assignments" {
+  description = "Map of volume backup policy assignments to be created"
   type        = any
   default     = {}
 }

@@ -1,14 +1,33 @@
-# Copyright (c) 2018, 2021 Oracle Corporation and/or affiliates.  All rights reserved.
-# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl
+data "oci_core_volume_backup_policies" "default_backup_policies" {}
+
+data "oci_core_volume_backup_policies" "volume_backup_policies" {
+  compartment_id = var.compartment_id  
+}
+
+locals {
+  ADs = (data.oci_identity_availability_domains.ad.availability_domains != null) ? [for i in data.oci_identity_availability_domains.ad.availability_domains : i.name] : ["dummy-ad-useful-only-to-avoid-errors-with-terragrunt-during-plan-phase"]
+  backup_policies = merge({
+    // Iterate through data.oci_core_volume_backup_policies.default_backup_policies and create a map containing name & ocid
+    // This is used to specify a backup policy id by name
+    for i in data.oci_core_volume_backup_policies.volume_backup_policies.volume_backup_policies : i.display_name => i.id 
+  },
+  {
+    for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id 
+  }
+  )
+}
 
 #############
 # Boot Volume
 #############
 
+
+
+
 # Assign a backup policy to instance's boot volume
 
 resource "oci_core_volume_backup_policy_assignment" "boot_volume_backup_policy" {
-  for_each  = var.boot_volumes_backup_policies
+  for_each  = var.boot_volumes_backup_policy_assignments
   asset_id  = oci_core_instance.instance[each.value.instance_name].boot_volume_id
   policy_id = local.backup_policies[each.value.backup_policy]
 }
@@ -18,7 +37,7 @@ resource "oci_core_volume_backup_policy_assignment" "volume_backup_policy" {
   # * The boot volume backup policy is controlled by var.boot_volume_backup_policy.
   # * You can choose between OCI default backup policies : gold, silver, bronze.
   # * If you set the variable to "disabled", no backup policy will be applied to the boot volume.
-  for_each  = var.volume_backup_policies
+  for_each  = var.volume_backup_policy_assignments
   asset_id  = oci_core_volume.volume[each.key].id
   policy_id = local.backup_policies[each.value]
 }
@@ -29,7 +48,7 @@ resource "oci_core_volume_backup_policy_assignment" "volume_backup_policy" {
 resource "oci_core_volume" "volume" {
   for_each            = var.block_volumes
   availability_domain = oci_core_instance.instance[each.value.instance_name_to_attach_to].availability_domain
-  compartment_id      = each.value.compartment_id
+  compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
   display_name        = lookup(each.value, "name", each.key)
   size_in_gbs         = each.value.size_in_gbs
   freeform_tags       = lookup(each.value, "freeform_tags", null)
@@ -63,7 +82,7 @@ resource "oci_core_volume_group" "volume_group" {
   for_each = var.volume_groups
   #Required 
   availability_domain = (can(each.value.boot_volumes_of_instances) ? oci_core_instance.instance[each.value.boot_volumes_of_instances[0]].availability_domain : can(each.value.volumes) ? oci_core_volume.volume[each.value.volumes[0]].id : null)
-  compartment_id      = var.compartment_id
+  compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
   source_details {
     #Required
     type       = "volumeIds"

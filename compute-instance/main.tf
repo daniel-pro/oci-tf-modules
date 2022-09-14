@@ -3,19 +3,6 @@ data "oci_identity_availability_domains" "ad" {
   compartment_id = var.compartment_id
 }
 
-data "oci_core_volume_backup_policies" "default_backup_policies" {}
-
-locals {
-  ADs = (data.oci_identity_availability_domains.ad.availability_domains != null) ? [for i in data.oci_identity_availability_domains.ad.availability_domains : i.name] : ["dummy-ad-useful-only-to-avoid-errors-with-terragrunt-during-plan-phase"]
-  backup_policies = {
-    // Iterate through data.oci_core_volume_backup_policies.default_backup_policies and create a map containing name & ocid
-    // This is used to specify a backup policy id by name
-    for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id
-  }
-}
-
-
-
 ############
 # Instance
 ############
