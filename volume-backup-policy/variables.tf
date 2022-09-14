@@ -3,8 +3,8 @@ variable "compartment_id" {
   type        = string
 }
 
-variable "volume_backup_policy_assignments" {
-  description = "Map of volume backup policy assignments to be created"
+variable "volume_backup_policies" {
+  description = "Map of volume backup policies to be created"
   type        = any
   default     = {}
 }
