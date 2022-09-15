@@ -39,7 +39,7 @@ resource "oci_core_volume_backup_policy_assignment" "volume_backup_policy" {
   # * If you set the variable to "disabled", no backup policy will be applied to the boot volume.
   for_each  = var.volume_backup_policy_assignments
   asset_id  = oci_core_volume.volume[each.key].id
-  policy_id = each.value
+  policy_id = local.backup_policies[each.value]
 }
 
 #########
