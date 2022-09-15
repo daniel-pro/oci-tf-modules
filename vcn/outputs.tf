@@ -52,9 +52,3 @@ output "network_security_group_all_attributes" {
   description = "all attributes of created nsgs"
   value       = { for k, v in oci_core_network_security_group.network_security_group : k => v }
 }
-
-
-output "subnet_debug" {
-  description = ""
-  value       = oci_core_subnet.vcn_subnet["frontend_subnet"].id
-}
