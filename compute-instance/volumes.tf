@@ -6,15 +6,7 @@ data "oci_core_volume_backup_policies" "volume_backup_policies" {
 
 locals {
   ADs = (data.oci_identity_availability_domains.ad.availability_domains != null) ? [for i in data.oci_identity_availability_domains.ad.availability_domains : i.name] : ["dummy-ad-useful-only-to-avoid-errors-with-terragrunt-during-plan-phase"]
-  backup_policies = merge({
-    // Iterate through data.oci_core_volume_backup_policies.default_backup_policies and create a map containing name & ocid
-    // This is used to specify a backup policy id by name
-    for i in data.oci_core_volume_backup_policies.volume_backup_policies.volume_backup_policies : i.display_name => i.id 
-  },
-  {
-    for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id 
-  }
-  )
+  default_backup_policies =  { for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id }
 }
 
 #############
@@ -29,7 +21,7 @@ locals {
 resource "oci_core_volume_backup_policy_assignment" "boot_volume_backup_policy" {
   for_each  = var.boot_volumes_backup_policy_assignments
   asset_id  = oci_core_instance.instance[each.value.instance_name].boot_volume_id
-  policy_id = local.backup_policies[each.value.backup_policy]
+  policy_id = length(regexall("gold|silver|bronze", each.value.backup_policy)) > 0 ? local.default_backup_policies[each.value.backup_policy] : each.value.backup_policy
 }
 
 
@@ -39,7 +31,7 @@ resource "oci_core_volume_backup_policy_assignment" "volume_backup_policy" {
   # * If you set the variable to "disabled", no backup policy will be applied to the boot volume.
   for_each  = var.volume_backup_policy_assignments
   asset_id  = oci_core_volume.volume[each.key].id
-  policy_id = local.backup_policies[each.value]
+  policy_id = length(regexall("gold|silver|bronze", each.value)) > 0 ? local.default_backup_policies[each.value] : each.value
 }
 
 #########
@@ -90,7 +82,7 @@ resource "oci_core_volume_group" "volume_group" {
   }
 
   #Optional
-  backup_policy_id = can(each.value.backup_policy) ? local.backup_policies[each.value.backup_policy] : null
+  backup_policy_id = can(each.value.backup_policy) ? length(regexall("gold|silver|bronze", each.value.backup_policy)) > 0 ? local.default_backup_policies[each.value.backup_policy] : each.value.backup_policy : null
   freeform_tags    = lookup(each.value, "freeform_tags", null)
   defined_tags     = lookup(each.value, "defined_tags", null)
   display_name     = lookup(each.value, "name", each.key)
