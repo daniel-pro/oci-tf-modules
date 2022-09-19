@@ -8,8 +8,7 @@ data "oci_identity_availability_domains" "ad" {
 ############
 resource "oci_core_instance" "instance" {
   for_each = var.compute_instances
-  // If no explicit AD number, spread instances on all ADs in round-robin. Looping to the first when last AD is reached
-  availability_domain  = each.value.availability_domain #can(each.value.ad_number) == false ? element(local.ADs, index(keys(var.compute_instances), each.key)) : element(local.ADs, each.value.ad_number - 1)
+  availability_domain  = each.value.availability_domain 
   compartment_id       = each.value.compartment_id
   display_name         = lookup(each.value, "name", each.key)
   extended_metadata    = lookup(each.value, "extended_metadata", null)
@@ -19,8 +18,6 @@ resource "oci_core_instance" "instance" {
   shape                = lookup(each.value, "shape", null)
   fault_domain         = lookup(each.value, "fault_domain", null)
   shape_config {
-    // If shape name contains ".Flex" and instance_flex inputs are not null, use instance_flex inputs values for shape_config block
-    // Else use values from data.oci_core_shapes.current_ad for var.shape
     memory_in_gbs             = lookup(each.value.instance_shape_config, "memory_in_gbs", null)
     ocpus                     = lookup(each.value.instance_shape_config, "ocpus", null)
     baseline_ocpu_utilization = lookup(each.value.instance_shape_config, "baseline_ocpu_utilization", null)
@@ -30,10 +27,6 @@ resource "oci_core_instance" "instance" {
     are_all_plugins_disabled = false
     is_management_disabled   = false
     is_monitoring_disabled   = false
-
-    # ! provider seems to have a bug with plugin_config stanzas below
-    // this configuration is applied at first resource creation
-    // subsequent updates are detected as changes by terraform but seems to be ignored by the provider ...
 
     dynamic "plugins_config" {
       for_each = lookup(each.value, "instance_agent_config", {})
