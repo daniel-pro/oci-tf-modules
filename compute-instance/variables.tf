@@ -32,3 +32,9 @@ variable "volume_backup_policy_assignments" {
   type        = any
   default     = {}
 }
+
+variable "vnic_attachments" {
+  description = "Map of vnic attachments to be created"
+  type        = any
+  default     = {}
+}
