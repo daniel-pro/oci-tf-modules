@@ -82,7 +82,7 @@ resource "oci_core_volume_group" "volume_group" {
   }
 
   #Optional
-  backup_policy_id = can(each.value.backup_policy) ? length(regexall("gold|silver|bronze", each.value.backup_policy)) > 0 ? local.default_backup_policies[each.value.backup_policy] : each.value.backup_policy : null
+  backup_policy_id = lookup(each.value, "backup_policy_id", null)
   freeform_tags    = lookup(each.value, "freeform_tags", null)
   defined_tags     = lookup(each.value, "defined_tags", null)
   display_name     = lookup(each.value, "name", each.key)
