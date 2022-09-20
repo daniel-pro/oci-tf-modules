@@ -39,17 +39,17 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
     for_each = lookup(each.value.secrule, "tcp_options", [])
     content {
       dynamic "source_port_range" {
-        for_each = tcp_options.value.source_port_range[*]
+        for_each = can(each.value.secrule.tcp_options.source_port_range) ? each.value.secrule.tcp_options : {}
         content {
-          max = tcp_options.value.source_port_range.max
-          min = tcp_options.value.source_port_range.min
+          max = source_port_range.value.max
+          min = source_port_range.value.min
         }
       }
       dynamic "destination_port_range" {
-        for_each = tcp_options.value.destination_port_range[*]
+        for_each = can(each.value.secrule.tcp_options.destination_port_range) ? each.value.secrule.tcp_options : {}
         content {
-          max = tcp_options.value.destination_port_range.max
-          min = tcp_options.value.destination_port_range.min
+          max = destination_port_range.value.max
+          min = destination_port_range.value.min
         }
       }
     }
@@ -67,21 +67,19 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
     for_each = lookup(each.value.secrule, "udp_options", [])
     content {
       dynamic "source_port_range" {
-        for_each = udp_options.value.source_port_range[*]
+        for_each = can(each.value.secrule.udp_options.source_port_range) ? each.value.secrule.udp_options : {}
         content {
-          max = udp_options.value.source_port_range.max
-          min = udp_options.value.source_port_range.min
+          max = source_port_range.value.max
+          min = source_port_range.value.min
         }
       }
       dynamic "destination_port_range" {
-        for_each = udp_options.value.destination_port_range[*]
+        for_each = can(each.value.secrule.udp_options.destination_port_range) ? each.value.secrule.udp_options : {}
         content {
-          max = udp_options.value.destination_port_range.max
-          min = udp_options.value.destination_port_range.min
+          max = destination_port_range.value.max
+          min = destination_port_range.value.min
         }
       }
     }
   }
-
-
 }
