@@ -77,7 +77,7 @@ resource "oci_load_balancer_backend_set" "backend_set" {
 
   #Optional
   dynamic "lb_cookie_session_persistence_configuration" {
-    for_each = { for key, value in each.value.backend_set : key => value if key == "cookie_session_persistence_configuration" }
+    for_each = { for key, value in each.value.backend_set : key => value if key == "lb_cookie_session_persistence_configuration" }
     content {
       #Optional
       cookie_name        = lookup(lb_cookie_session_persistence_configuration.value, "cookie_name", null)
