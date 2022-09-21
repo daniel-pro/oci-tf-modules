@@ -36,7 +36,7 @@ resource "oci_core_instance" "instance" {
   dynamic "create_vnic_details" {
     for_each = lookup(each.value, "vnic_details", {})
     content {
-      assign_public_ip = lookup(create_vnic_details.value, "public_ip", false)
+      assign_public_ip = lookup(create_vnic_details.value, "assign_public_ip", false)
       display_name     = lookup(create_vnic_details.value, "vnic_name", create_vnic_details.key)
       hostname_label   = lookup(create_vnic_details.value, "hostname_label", each.key)
       private_ip       = lookup(create_vnic_details.value, "private_ip", null)
