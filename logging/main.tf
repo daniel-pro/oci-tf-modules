@@ -58,8 +58,8 @@ resource "oci_logging_unified_agent_configuration" "unified_agent_configuration"
     configuration_type = can(each.value.service_configuration.configuration_type) ? each.value.service_configuration.configuration_type : "LOGGING"
 
     destination {
-        #Required
-        log_object_id = oci_logging_log.log[each.value.service_configuration.destination.log_name].id
+      #Required
+      log_object_id = oci_logging_log.log[each.value.service_configuration.destination.log_name].id
     }
     sources {
       #Required
