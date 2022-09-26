@@ -3,7 +3,7 @@ data "oci_identity_availability_domains" "ad" {
 }
 
 resource "oci_core_instance" "instance" {
-  for_each = var.compute_instances
+  for_each             = var.compute_instances
   availability_domain  = each.value.availability_domain #can(each.value.ad_number) == false ? element(local.ADs, index(keys(var.compute_instances), each.key)) : element(local.ADs, each.value.ad_number - 1)
   compartment_id       = each.value.compartment_id
   display_name         = lookup(each.value, "name", each.key)
@@ -70,25 +70,25 @@ resource "oci_core_instance" "instance" {
 
 resource "oci_core_vnic_attachment" "vnic_attachment" {
   for_each = var.vnic_attachments
-    #Required
-    create_vnic_details {
-
-        #Optional
-        assign_private_dns_record = lookup(each.value.create_vnic_details, "assign_private_dns_record", null)
-        assign_public_ip = lookup(each.value.create_vnic_details, "assign_public_ip", null)
-        display_name = lookup(each.value.create_vnic_details, "name", null)
-        defined_tags = lookup(each.value.create_vnic_details, "defined_tags", null)
-        freeform_tags = lookup(each.value.create_vnic_details, "freeform_tags", null)
-        hostname_label = lookup(each.value.create_vnic_details, "hostname_label", null)
-        nsg_ids = lookup(each.value.create_vnic_details, "nsg_ids", null)
-        private_ip = lookup(each.value.create_vnic_details, "private_ip", null)
-        skip_source_dest_check = lookup(each.value.create_vnic_details, "skip_source_dest_check", null)
-        subnet_id = lookup(each.value.create_vnic_details, "subnet_id", null)
-        vlan_id = lookup(each.value.create_vnic_details, "vlan_id", null)
-    }
-    instance_id = oci_core_instance.instance[each.value.instance_name].id
+  #Required
+  create_vnic_details {
 
     #Optional
-    display_name = lookup(each.value, "name", each.key)
-    nic_index = lookup(each.value, "nic_index", null)
+    assign_private_dns_record = lookup(each.value.create_vnic_details, "assign_private_dns_record", null)
+    assign_public_ip          = lookup(each.value.create_vnic_details, "assign_public_ip", null)
+    display_name              = lookup(each.value.create_vnic_details, "name", null)
+    defined_tags              = lookup(each.value.create_vnic_details, "defined_tags", null)
+    freeform_tags             = lookup(each.value.create_vnic_details, "freeform_tags", null)
+    hostname_label            = lookup(each.value.create_vnic_details, "hostname_label", null)
+    nsg_ids                   = lookup(each.value.create_vnic_details, "nsg_ids", null)
+    private_ip                = lookup(each.value.create_vnic_details, "private_ip", null)
+    skip_source_dest_check    = lookup(each.value.create_vnic_details, "skip_source_dest_check", null)
+    subnet_id                 = lookup(each.value.create_vnic_details, "subnet_id", null)
+    vlan_id                   = lookup(each.value.create_vnic_details, "vlan_id", null)
+  }
+  instance_id = oci_core_instance.instance[each.value.instance_name].id
+
+  #Optional
+  display_name = lookup(each.value, "name", each.key)
+  nic_index    = lookup(each.value, "nic_index", null)
 }

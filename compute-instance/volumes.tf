@@ -1,12 +1,12 @@
 data "oci_core_volume_backup_policies" "default_backup_policies" {}
 
 data "oci_core_volume_backup_policies" "volume_backup_policies" {
-  compartment_id = var.compartment_id  
+  compartment_id = var.compartment_id
 }
 
 locals {
-  ADs = (data.oci_identity_availability_domains.ad.availability_domains != null) ? [for i in data.oci_identity_availability_domains.ad.availability_domains : i.name] : ["dummy-ad-useful-only-to-avoid-errors-with-terragrunt-during-plan-phase"]
-  default_backup_policies =  { for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id }
+  ADs                     = (data.oci_identity_availability_domains.ad.availability_domains != null) ? [for i in data.oci_identity_availability_domains.ad.availability_domains : i.name] : ["dummy-ad-useful-only-to-avoid-errors-with-terragrunt-during-plan-phase"]
+  default_backup_policies = { for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id }
 }
 
 #############
