@@ -38,3 +38,9 @@ variable "vnic_attachments" {
   type        = any
   default     = {}
 }
+
+variable "enabled" {
+  description = "If false the module's resources won't be created/will be destroyed"
+  type        = bool
+  default     = true
+}

@@ -3,7 +3,11 @@ data "oci_identity_availability_domains" "ad" {
 }
 
 resource "oci_core_instance" "instance" {
-  for_each             = var.compute_instances
+  for_each = {
+    for k, v in var.compute_instances : k => v
+    if var.enabled
+  }
+  # for_each             = var.disabled == true ? {} : var.compute_instances
   availability_domain  = each.value.availability_domain #can(each.value.ad_number) == false ? element(local.ADs, index(keys(var.compute_instances), each.key)) : element(local.ADs, each.value.ad_number - 1)
   compartment_id       = each.value.compartment_id
   display_name         = lookup(each.value, "name", each.key)
