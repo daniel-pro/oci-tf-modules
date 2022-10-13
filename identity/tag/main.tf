@@ -14,7 +14,9 @@ resource "oci_identity_tag" "identity_tag" {
   name             = lookup(each.value, "name", each.key)
   tag_namespace_id = oci_identity_tag_namespace.tag_namespace[each.value.tag_namespace_name].id
 
-  is_retired = lookup(each.value, "is_retired", false)
+  # Optional
+  is_cost_tracking = lookup(each.value, "is_cost_tracking", false)
+  is_retired = lookup(each.value, "is_retired", false)  
   dynamic "validator" {
     for_each = { for key, value in each.value : key => value if key == "validator" }
 
@@ -24,5 +26,7 @@ resource "oci_identity_tag" "identity_tag" {
       values         = validator.value.values
     }
   }
+  freeform_tags = lookup(each.value, "freeform_tags", null)
+  defined_tags  = lookup(each.value, "defined_tags", null)
 }
 
