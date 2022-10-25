@@ -30,3 +30,14 @@ resource "oci_identity_tag" "identity_tag" {
   defined_tags  = lookup(each.value, "defined_tags", null)
 }
 
+resource "oci_identity_tag_default" "tag_default" {
+  for_each = var.tag_defaults
+    #Required
+    compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
+    tag_definition_id = oci_identity_tag.identity_tag[each.value.tag_name].id
+    value = each.value.value
+
+    #Optional
+    is_required = lookup(each.value, "is_required", false)
+
+}
