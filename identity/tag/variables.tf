@@ -15,3 +15,9 @@ variable "identity_tags" {
   type        = any
   default     = {}
 }
+
+variable "tag_defaults" {
+  description = "Default Tags"
+  type        = any
+  default     = {}
+}
