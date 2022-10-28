@@ -3,7 +3,7 @@
 ########################
 
 resource "oci_core_internet_gateway" "internet_gateway" {
-  for_each       = var.internet_gateway
+  for_each       = var.internet_gateway  != null ? var.internet_gateway : {}
   compartment_id = var.compartment_id
   display_name   = lookup(each.value, "name", each.key)
 
@@ -15,7 +15,7 @@ resource "oci_core_internet_gateway" "internet_gateway" {
 }
 
 resource "oci_core_service_gateway" "service_gateway" {
-  for_each       = var.service_gateway
+  for_each       = var.service_gateway != null ? var.service_gateway : {}
   compartment_id = var.compartment_id
   display_name   = lookup(each.value, "name", each.key)
 
@@ -34,7 +34,7 @@ resource "oci_core_service_gateway" "service_gateway" {
 # NAT Gateway (NGW)
 ###################
 resource "oci_core_nat_gateway" "nat_gateway" {
-  for_each = var.nat_gateway
+  for_each = var.nat_gateway  != null ? var.nat_gateway : {}
 
   compartment_id = var.compartment_id
   display_name   = lookup(each.value, "name", each.key)
@@ -51,7 +51,7 @@ resource "oci_core_nat_gateway" "nat_gateway" {
 # Service Gateway (SGW)
 #######################
 data "oci_core_services" "all_oci_services" {
-  for_each = var.service_gateway
+  for_each = var.service_gateway  != null ? var.service_gateway : {}
   filter {
     name   = "name"
     values = ["All .* Services In Oracle Services Network"]
@@ -66,9 +66,9 @@ data "oci_core_services" "all_oci_services" {
 #############################
 
 resource "oci_core_local_peering_gateway" "lpg" {
-  for_each       = var.local_peering_gateways != null ? var.local_peering_gateways : {}
+  for_each       = var.local_peering_gateway != null ? var.local_peering_gateway : {}
   compartment_id = var.compartment_id
-  display_name   = each.key
+  display_name   = lookup(each.value, "name", each.key)
 
   freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)
   defined_tags  = lookup(each.value, "defined_tags", var.defined_tags)

@@ -148,7 +148,7 @@ variable "internet_gateway_display_name" {
   }
 }
 
-variable "local_peering_gateways" {
+variable "local_peering_gateway" {
   description = "Map of Local Peering Gateways to attach to the VCN."
   type        = map(any)
   default     = null
