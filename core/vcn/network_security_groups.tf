@@ -29,7 +29,7 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
   protocol                  = lookup(each.value.secrule, "protocol")
 
   description      = lookup(each.value.secrule, "description", each.value.secrule_key)
-  source           = lookup(each.value.secrule, "source", null)
+  source           = lookup(each.value.secrule, "source_type", null) == "NETWORK_SECURITY_GROUP" ? oci_core_network_security_group.network_security_group[each.value.secrule.source].id : lookup(each.value.secrule, "source", null)
   source_type      = lookup(each.value.secrule, "source_type", null)
   stateless        = lookup(each.value.secrule, "stateless", null)
   destination      = lookup(each.value.secrule, "destination", null)
