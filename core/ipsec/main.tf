@@ -60,7 +60,8 @@ resource "oci_core_ipsec_connection_tunnel_management" "ipsec_connection_tunnel"
       oracle_interface_ip   = lookup(bgp_session_info.value, "oracle_interface_ip", null)
     }
   }
-  display_name = each.key
+  
+  display_name = lookup(each.value, "name", each.key)
 
   dynamic "encryption_domain_config" {
     for_each = { for key, value in each.value.tunnel : key => value if key == "encryption_domain_config" }
