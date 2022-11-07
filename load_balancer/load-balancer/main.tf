@@ -20,7 +20,7 @@ resource "oci_load_balancer_load_balancer" "load_balancer" {
     }
   }
   dynamic "shape_details" {
-    for_each = lookup(each.value, "each.value.shape_details", {})
+    for_each = lookup(each.value, "shape_details", {})
     #Required
     content {
       maximum_bandwidth_in_mbps = shape_details.value.maximum_bandwidth_in_mbps
