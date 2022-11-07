@@ -52,3 +52,8 @@ output "network_security_group_all_attributes" {
   description = "all attributes of created nsgs"
   value       = { for k, v in oci_core_network_security_group.network_security_group : k => v }
 }
+
+output "dns_resolver_id" {
+  description = "The VCN DNS resolver ID"
+  value = data.oci_core_vcn_dns_resolver_association.vcn_dns_resolver_association.dns_resolver_id
+}

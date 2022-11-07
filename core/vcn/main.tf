@@ -32,4 +32,7 @@ resource "oci_core_drg_attachment" "drg_vcn_attachment" {
   remove_export_drg_route_distribution_trigger = false # (Optional) (Updatable) boolean
 }
 
-
+data "oci_core_vcn_dns_resolver_association" "vcn_dns_resolver_association" {
+    #Required
+    vcn_id = oci_core_vcn.vcn.id
+}
