@@ -6,7 +6,7 @@ resource "oci_dns_view" "dns_view" {
     #Optional
     scope = lookup(each.value, "scope", null)
     defined_tags = lookup(each.value, "defined_tags", null)
-    display_name = lookup(each.value, "display_name", null)
+    display_name = lookup(each.value, "name", each.key)
     freeform_tags = lookup(each.value, "freeform_tags", null)
 }
 
@@ -15,7 +15,7 @@ resource "oci_dns_zone" "dns_zone" {
     #Required
     compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
     name = lookup(each.value, "name", each.key)
-    zone_type = each.value.zone_zone_type
+    zone_type = each.value.zone_type
 
     #Optional
     defined_tags = lookup(each.value, "defined_tags", null)
@@ -31,7 +31,7 @@ resource "oci_dns_zone" "dns_zone" {
         }
     }
     freeform_tags = lookup(each.value, "freeform_tags", null)
-    scope = lookup(each.value, "zone_scope", null)
+    scope = lookup(each.value, "scope", null)
     view_id = can(each.value.view_name) ? oci_dns_view.dns_view[each.value.view_name].id : null
 }
 
@@ -53,12 +53,12 @@ resource "oci_dns_rrset" "dns_rrset" {
     #Required
     domain = each.value.domain
     rtype = each.value.rtype
-    zone_name_or_id = each.value.zone_name
+    zone_name_or_id = oci_dns_zone.dns_zone[each.value.zone_name].id
 
     #Optional
     compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
     dynamic items {
-      for_each = lookup(each.value, "items", {})
+      for_each = lookup(each.value, "items" , {})
       content {
         #Required
         domain = items.value.domain
@@ -80,10 +80,10 @@ resource "oci_dns_resolver" "dns_resolver" {
     scope =  lookup(each.value, "scope", null)
 
     dynamic attached_views {
-      for_each = lookup(each.value, "attached_views", {})
+      for_each = lookup(each.value,"attached_views", [])
       content {
         #Required
-        view_id = oci_dns_view[attached_views.value.view_name].id
+        view_id = oci_dns_view.dns_view[attached_views.value.view_name].id
       }
     }
     defined_tags = lookup(each.value, "defined_tags", null)
