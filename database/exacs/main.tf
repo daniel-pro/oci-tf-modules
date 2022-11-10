@@ -29,7 +29,7 @@ resource "oci_database_cloud_exadata_infrastructure" "cloud_exadata_infrastructu
       #Optional
       custom_action_timeout_in_mins = lookup(maintenance_window.value, "custom_action_timeout_in_mins", 15)
       dynamic "days_of_week" {
-        for_each = { for key, value in maintenance_window.value : key => value if key == "days_of_week" }
+        for_each = lookup(maintenance_window.value, "days_of_week", {})
         content {
           #Required
           name = days_of_week.value.name
@@ -37,7 +37,7 @@ resource "oci_database_cloud_exadata_infrastructure" "cloud_exadata_infrastructu
       }
       hours_of_day                     = lookup(maintenance_window.value, "hours_of_day", null)
       is_custom_action_timeout_enabled = lookup(maintenance_window.value, "is_custom_action_timeout_enabled", false)
-      lead_time_in_weeks               = lookup(maintenance_window, "lead_time_in_weeks", null)
+      lead_time_in_weeks               = lookup(maintenance_window.value, "lead_time_in_weeks", null)
       dynamic "months" {
         for_each = lookup(maintenance_window.value, "months", {})
         #Required
