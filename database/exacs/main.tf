@@ -139,8 +139,7 @@ resource "oci_database_db_home" "db_home" {
   #Optional
   database_software_image_id = lookup(each.value, "database_software_image_id", null)
   db_system_id               = lookup(each.value, "db_system_id", null)
-  //    db_version {
-  //    }
+  db_version                 = lookup(each.value, "db_version", null)
   defined_tags           = lookup(each.value, "defined_tags", null)
   display_name           = lookup(each.value, "name", each.key)
   freeform_tags          = lookup(each.value, "freeform_tags", null)
