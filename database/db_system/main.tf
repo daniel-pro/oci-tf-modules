@@ -4,7 +4,7 @@ resource "oci_database_db_system" "db_system" {
     availability_domain = each.value.availability_domain
     compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
 
-    hostname = each.value.hostname
+    hostname = lookup(each.value, "hostname", each.key)
     shape = each.value.shape
     ssh_public_keys = each.value.ssh_public_keys
     subnet_id = each.value.subnet_id
