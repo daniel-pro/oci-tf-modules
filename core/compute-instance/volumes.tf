@@ -66,6 +66,16 @@ resource "oci_core_volume_attachment" "volume_attachment" {
   instance_id     = oci_core_instance.instance[each.value.instance_name_to_attach_to].id
   volume_id       = oci_core_volume.volume[each.key].id
   use_chap        = lookup(each.value, "use_chap", null)
+
+  #Optional
+  device = lookup(each.value, "device", null)
+  display_name =  lookup(each.value, "display_name", each.key)
+  encryption_in_transit_type = lookup(each.value, "encryption_in_transit_type", null)
+  is_agent_auto_iscsi_login_enabled = lookup(each.value, "is_agent_auto_iscsi_login_enabled", null)
+  is_pv_encryption_in_transit_enabled = lookup(each.value, "is_pv_encryption_in_transit_enabled", null)
+  is_read_only = lookup(each.value, "is_read_only", null)
+  is_shareable = lookup(each.value, "is_shareable", null)
+
 }
 
 
