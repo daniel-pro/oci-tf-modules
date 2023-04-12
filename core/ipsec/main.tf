@@ -22,7 +22,7 @@ resource "oci_core_ipsec" "ipsec_connection" {
   compartment_id = var.compartment_id
   cpe_id         = oci_core_cpe.cpe[each.value.cpe_name].id
   drg_id         = each.value.drg_id
-  static_routes  = each.value.static_routes
+  static_routes  = lookup(each.value, "static_routes", [])
 
   #Optional
   cpe_local_identifier      = lookup(each.value, "cpe_local_identifier", null)
