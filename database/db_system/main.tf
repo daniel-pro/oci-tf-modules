@@ -134,3 +134,13 @@ resource "oci_database_db_system" "db_system" {
     storage_volume_performance_mode = lookup(each.value, "storage_volume_performance_mode", null)
     time_zone = lookup(each.value, "time_zone", null)
 }
+
+
+data "oci_database_databases" "databases" {
+  for_each = var.db_systems
+    #Required
+    compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
+
+    #Optional
+    db_home_id = oci_database_db_system.db_system[each.key].db_home[0].id
+}
