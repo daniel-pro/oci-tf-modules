@@ -1,5 +1,5 @@
 resource "oci_database_pluggable_database" "pluggable_database" {
-  for_each = var.pluggable_database
+  for_each = var.pluggable_databases
     #Required
     container_database_id = each.value.container_database_id
     pdb_name = lookup(each.value, "pdb_name", each.key)
