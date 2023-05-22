@@ -84,7 +84,7 @@ variable "nat_gateway_public_ip_id" {
 
 variable "vcn_cidrs" {
   description = "The list of IPv4 CIDR blocks the VCN will use."
-  default     = ["10.0.0.0/16"]
+  default     = []
   type        = list(string)
 }
 
