@@ -273,3 +273,10 @@ variable "drg_vcn_attachment" {
   type        = any
   default     = {}
 }
+
+
+variable "lockdown_default_seclist_trigger_action" {
+  description = "whether to remove all default security rules from the VCN Default Security List - double check"
+  default     = true
+  type        = bool
+}
