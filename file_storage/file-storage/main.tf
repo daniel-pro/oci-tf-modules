@@ -48,7 +48,7 @@ resource "oci_file_storage_filesystem_snapshot_policy" "filesystem_snapshot_poli
   #Optional
   freeform_tags = lookup(each.value, "freeform_tags", null)
   defined_tags  = lookup(each.value, "defined_tags", null)
-  display_name  = lookup(each.value, "name", each.value.snapshot_policy_key)
+  display_name  = lookup(each.value, "name", each.key)
 
   policy_prefix = lookup(each.value, "policy_prefix", null)
 
@@ -97,7 +97,7 @@ resource "oci_file_storage_export" "export" {
   }
   #Required
   export_set_id  = oci_file_storage_export_set.export_set[each.value.export.mount_target].id
-  file_system_id = oci_file_storage_file_system.file_system[each.value.export.file_system].id
+  file_system_id = oci_file_storage_file_system.file_system[each.value.file_system_key].id
   path           = each.value.export.path
 
   #Optional
