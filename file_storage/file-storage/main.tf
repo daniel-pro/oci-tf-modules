@@ -102,7 +102,7 @@ resource "oci_file_storage_export" "export" {
 
   #Optional
   dynamic "export_options" {
-    for_each = { for key, value in each.value.export : key => value if key == "export_options" }
+    for_each = lookup(each.value.export, "export_options", {})
     content {
       #Required
       source = export_options.value.source
