@@ -1,9 +1,9 @@
-locals {
-  dhcp_default_options = data.oci_core_dhcp_options.dhcp_options.options.0.id
-  #dp_sec_lists         = flatten([for seclist, value in var.security_lists: value.id])
-  dp_sec_lists = [for k, v in var.subnets : v]
-  # matchkeys(var.security_lists,  keys(var.security_lists), "ssh")
-}
+### locals {
+###   dhcp_default_options = data.oci_core_dhcp_options.dhcp_options.options.0.id
+###   #dp_sec_lists         = flatten([for seclist, value in var.security_lists: value.id])
+###   dp_sec_lists = [for k, v in var.subnets : v]
+###   # matchkeys(var.security_lists,  keys(var.security_lists), "ssh")
+### }
 
 resource "oci_core_subnet" "vcn_subnet" {
   for_each       = var.subnets
