@@ -1,7 +1,7 @@
 resource "oci_core_dhcp_options" "dhcp_options" {
   for_each = var.dhcp_options
 
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
 
   dynamic "options" {
     for_each = lookup(each.value, "options", null)

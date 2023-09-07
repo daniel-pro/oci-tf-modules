@@ -12,7 +12,7 @@
 resource "oci_core_security_list" "security_list" {
   for_each = var.security_lists
 
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   vcn_id         = oci_core_vcn.vcn.id
 
   freeform_tags = lookup(each.value, "freeform_tags", var.freeform_tags)

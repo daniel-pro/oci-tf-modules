@@ -1,7 +1,7 @@
 resource "oci_core_route_table" "route_table" {
   for_each = var.route_tables
 
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   display_name   = lookup(each.value, "name", each.key)
   vcn_id         = oci_core_vcn.vcn.id
 

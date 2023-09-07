@@ -2,7 +2,7 @@ resource "oci_core_network_security_group" "network_security_group" {
   for_each = var.network_security_groups
 
   #Required
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   vcn_id         = oci_core_vcn.vcn.id
 
   #Optional

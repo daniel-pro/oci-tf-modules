@@ -8,7 +8,7 @@ locals {
 resource "oci_core_subnet" "vcn_subnet" {
   for_each       = var.subnets
   cidr_block     = each.value.cidr_block
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   vcn_id         = oci_core_vcn.vcn.id
 
   dhcp_options_id = oci_core_dhcp_options.dhcp_options[each.value.dhcp_options].id
@@ -25,13 +25,13 @@ resource "oci_core_subnet" "vcn_subnet" {
 
 data "oci_core_dhcp_options" "dhcp_options" {
 
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   vcn_id         = oci_core_vcn.vcn.id
 }
 
 data "oci_core_security_lists" "security_lists" {
 
-  compartment_id = var.compartment_id
+  compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   vcn_id         = oci_core_vcn.vcn.id
 }
 
