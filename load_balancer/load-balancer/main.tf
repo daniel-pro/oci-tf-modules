@@ -19,13 +19,10 @@ resource "oci_load_balancer_load_balancer" "load_balancer" {
       id = reserved_ips.value.ids
     }
   }
-  dynamic "shape_details" {
-    for_each = lookup(each.value, "shape_details", {})
+  shape_details {
     #Required
-    content {
-      maximum_bandwidth_in_mbps = shape_details.value.maximum_bandwidth_in_mbps
-      minimum_bandwidth_in_mbps = shape_details.value.minimum_bandwidth_in_mbps
-    }
+      maximum_bandwidth_in_mbps = each.value.shape_details.maximum_bandwidth_in_mbps
+      minimum_bandwidth_in_mbps = each.value.shape_details.minimum_bandwidth_in_mbps
   }
 }
 
