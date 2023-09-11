@@ -81,7 +81,7 @@ resource "oci_load_balancer_backend_set" "backend_set" {
       disable_fallback   = lookup(lb_cookie_session_persistence_configuration.value, "disable_fallback", null)
       domain             = lookup(lb_cookie_session_persistence_configuration.value, "domain", null)
       is_http_only       = lookup(lb_cookie_session_persistence_configuration.value, "is_http_only", null)
-      is_secure          = lookup(lb_cookie_session_persistence_configuration.value, "is_secure", null)
+      is_secure          = lookup(lb_cookie_session_persistence_configuration.value, "is_secure", false)
       max_age_in_seconds = lookup(lb_cookie_session_persistence_configuration.value, "max_age_in_seconds", null)
       path               = lookup(lb_cookie_session_persistence_configuration.value, "path", null)
     }
