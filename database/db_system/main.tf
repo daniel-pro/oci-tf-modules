@@ -36,7 +36,7 @@ resource "oci_database_db_system" "db_system" {
                         type = lookup(backup_destination_details.value, "type", null)
                     }
                     }
-                    recovery_window_in_days = lookup(db_backup_config, "recovery_window_in_days", null)
+                    recovery_window_in_days = lookup(db_backup_config.value, "recovery_window_in_days", null)
                 }
             }
             db_domain = lookup(each.value.db_home.database, "db_domain", null)
