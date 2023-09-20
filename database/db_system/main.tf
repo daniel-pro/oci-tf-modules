@@ -37,6 +37,7 @@ resource "oci_database_db_system" "db_system" {
                     }
                     }
                     recovery_window_in_days = lookup(db_backup_config.value, "recovery_window_in_days", null)
+                    run_immediate_full_backup = lookup(db_backup_config.value, "run_immediate_full_backup", null)
                 }
             }
             db_domain = lookup(each.value.db_home.database, "db_domain", null)
