@@ -35,6 +35,12 @@ variable "memory_in_gbs" {
   description = "Size of memory in GB"
 }
 
+variable "baseline_ocpu_utilization" {
+  type        = string
+  default     = "BASELINE_1_1"
+  description = "Burst Baseline"
+}
+
 variable "instance_shape" {
   type        = string
   default     = "VM.Standard2.1"

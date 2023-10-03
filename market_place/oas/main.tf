@@ -6,7 +6,7 @@ module "oas_compute_instance" {
   availability_domain   = var.availability_domain
   boot_volume_size      = var.boot_volume_size
   ocpus                 = var.ocpus
-
+  baseline_ocpu_utilization = var.baseline_ocpu_utilization
   memory_in_gbs                    = var.memory_in_gbs
   instance_shape                   = var.instance_shape
   mp_OAS_listing_image_resource_id = var.mp_OAS_listing_image_resource_id

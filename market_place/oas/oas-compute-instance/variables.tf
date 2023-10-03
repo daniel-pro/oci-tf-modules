@@ -88,3 +88,7 @@ variable "oas_rcu_schema_prefix" {
 variable "oas_rcu_schema_password" {
   type      = string
 }
+
+variable "baseline_ocpu_utilization" {
+  type      = string
+}

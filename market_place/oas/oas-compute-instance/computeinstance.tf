@@ -1,6 +1,6 @@
 locals {
   is_flex_shape     = (var.instance_shape == "VM.Standard.E4.Flex") || (var.instance_shape == "VM.Standard.E3.Flex")
-  flex_shape_config = local.is_flex_shape ? [{ "ocpus" : var.ocpus, "memory_in_gbs" : var.memory_in_gbs }] : []
+  flex_shape_config = local.is_flex_shape ? [{ "ocpus" : var.ocpus, "memory_in_gbs" : var.memory_in_gbs, "baseline_ocpu_utilization": try(var.baseline_ocpu_utilization, null) }] : []
 }
 
 data "cloudinit_config" "oas_cloud_init" {
@@ -48,6 +48,7 @@ resource "oci_core_instance" "OAS_MP_instance" {
     content {
       ocpus         = shape_config.value.ocpus
       memory_in_gbs = shape_config.value.memory_in_gbs
+      baseline_ocpu_utilization = shape_config.value.baseline_ocpu_utilization
     }
   }
   display_name = var.instance_display_name
