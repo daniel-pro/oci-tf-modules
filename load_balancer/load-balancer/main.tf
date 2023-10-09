@@ -195,7 +195,7 @@ resource "oci_load_balancer_listener" "listener" {
   hostname_names = [for host in lookup(each.value.listener, "hostnames", []) : oci_load_balancer_hostname.hostname["${each.value.lb_key}_${host}"].name]
 
   #    routing_policy_name = can(each.value.listener.routing_policy_name) ? oci_load_balancer_load_balancer_routing_policy.load_balancer_routing_policy[each.value.listener.routing_policy_name].name : null
-  #    rule_set_names = [for ruleset in lookup(each.value.listener, "rule_set_names", []) : oci_load_balancer_rule_set.rule_set["${each.value.lb_key}_${ruleset}"].name ]
+  rule_set_names = [for ruleset in lookup(each.value.listener, "rule_set_names", []) : oci_load_balancer_rule_set.load_balancer_rule_set["${each.value.lb_key}_${ruleset}"].name ]
 
   dynamic "ssl_configuration" {
     for_each = { for key, value in each.value.listener : key => value if key == "ssl_configuration" }
@@ -215,6 +215,63 @@ resource "oci_load_balancer_listener" "listener" {
     oci_load_balancer_certificate.certificate
   ]
 }
+
+
+resource "oci_load_balancer_rule_set" "load_balancer_rule_set" {
+    for_each = { for k in flatten([
+      for key, lb in var.load_balancers : [
+        for key_rs, rule_set in lb.rule_sets : {
+          lb_key   = key
+          rs_key = key_rs
+          rule_set = rule_set
+        }
+      ]
+      ]) : "${k.lb_key}_${k.rs_key}" => k
+    }
+    #Required
+    items {
+        #Required
+        action = each.value.rule_set.items_action
+
+        #Optional
+        allowed_methods = lookup(each.value.rule_set, "allowed_methods", [])
+        are_invalid_characters_allowed = lookup(each.value.rule_set, "are_invalid_characters_allowed", null)
+
+        dynamic "conditions" {
+          for_each = { for key, value in each.value.rule_set : key => value if key == "conditions" }
+          content {
+            #Required
+            attribute_name = conditions.value.attribute_name
+            attribute_value = conditions.value.attribute_value
+
+            #Optional
+            operator = lookup(conditions.value, "operator", null)
+          }
+        }
+        description = lookup(each.value.rule_set, "description", null)
+        header = lookup(each.value.rule_set, "header", null)
+        http_large_header_size_in_kb = lookup(each.value.rule_set, "http_large_header_size_in_kb", null)
+        prefix = lookup(each.value.rule_set, "prefix", null)
+        dynamic "redirect_uri" {
+            for_each = { for key, value in each.value.rule_set : key => value if key == "redirect_uri" }
+            content {
+              #Optional
+              host = lookup(redirect_uri.value, "host", "{host}")
+              path = lookup(redirect_uri.value, "path", "/{path}")
+              port = lookup(redirect_uri.value, "port", "{port}")
+              protocol = lookup(redirect_uri.value, "protocol", "{protocol}")
+              query = lookup(redirect_uri.value, "query", "?{query}")
+            }
+        }
+        response_code = lookup(each.value.rule_set, "response_code", "302")
+        status_code = lookup(each.value.rule_set, "status_code", null)
+        suffix = lookup(each.value.rule_set, "suffix", null)
+        value = lookup(each.value.rule_set, "value", null)
+    }
+    load_balancer_id = oci_load_balancer_load_balancer.load_balancer[each.value.lb_key].id
+    name = lookup(each.value.rule_set, "name", each.value.rs_key)
+}
+
 
 /* WIP
 
