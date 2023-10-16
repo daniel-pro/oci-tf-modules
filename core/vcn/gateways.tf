@@ -66,7 +66,7 @@ data "oci_core_services" "all_oci_services" {
 #############################
 
 resource "oci_core_local_peering_gateway" "lpg" {
-  for_each       = var.local_peering_gateway != null ? var.local_peering_gateway : {}
+  for_each       = var.local_peering_gateways != null ? var.local_peering_gateways : {}
   compartment_id = lookup(each.value,"compartment_id",var.compartment_id)
   display_name   = lookup(each.value, "name", each.key)
 
@@ -77,6 +77,6 @@ resource "oci_core_local_peering_gateway" "lpg" {
 
   #Optional
   peer_id        = can(each.value.peer_id) == false ? null : each.value.peer_id
-  route_table_id = can(each.value.route_table_id) == false ? null : each.value.route_table_id
+  route_table_id = can(each.value.route_table_id) ? each.value.route_table_id : can(each.value.route_table) ? oci_core_route_table.route_table[each.value.route_table].id : null
 
 }
