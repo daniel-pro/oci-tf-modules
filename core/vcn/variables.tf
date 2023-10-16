@@ -194,6 +194,11 @@ variable "route_tables" {
   default     = {}
 }
 
+variable "default_route_table" {
+  description = "Default route table variable - with its correspondent route rules"
+  type        = any
+  default     = {}
+}
 
 variable "attached_drg_id" {
   description = "the ID of DRG attached to the VCN"
