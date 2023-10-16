@@ -11,7 +11,7 @@ output "internet_gateway_all_attributes" {
 
 output "lpg_all_attributes" {
   description = "all attributes of created lpg"
-  value       = { for k, v in oci_core_local_peering_gateways.lpg : k => v }
+  value       = { for k, v in oci_core_local_peering_gateway.lpg : k => v }
 }
 
 output "nat_gateway_all_attributes" {
