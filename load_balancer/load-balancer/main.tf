@@ -33,7 +33,7 @@ resource "oci_load_balancer_certificate" "certificate" {
   load_balancer_id = oci_load_balancer_load_balancer.load_balancer[each.value.lb_name].id
 
   #Optional
-  ca_certificate     = each.value.ca_certificate
+  ca_certificate     = lookup(each.value, "ca_certificate", null)
   passphrase         = lookup(each.value, "passphrase", null)
   private_key        = each.value.private_key
   public_certificate = each.value.public_certificate
