@@ -13,7 +13,7 @@ resource "oci_database_pluggable_database" "pluggable_database" {
 
   # Default is 20m
   timeouts {
-    create = "120m"
-    delete = "120m"
+    create = "2h"
+    delete = "2h"
   }
 }
