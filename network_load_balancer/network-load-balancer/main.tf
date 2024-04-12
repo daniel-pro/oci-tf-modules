@@ -3,7 +3,7 @@ resource "oci_network_load_balancer_network_load_balancer" "network_load_balance
     #Required
     compartment_id             = each.value.compartment_id
     display_name               = lookup(each.value, "name", each.key)
-    subnet_ids                 = each.value.subnet_ids
+    subnet_id                  = each.value.subnet_id
     defined_tags               = lookup(each.value, "defined_tags", null)
     freeform_tags              = lookup(each.value, "freeform_tags", null)
     is_private                 = lookup(each.value, "is_private", "true")
@@ -52,7 +52,7 @@ resource "oci_network_load_balancer_backend_set" "backend_set" {
 
     name                     = lookup(each.value.backend_set, "name", "${each.value.lb_key}_${each.value.bs_key}")
     network_load_balancer_id = oci_network_load_balancer_network_load_balancer.network_load_balancer[each.value.lb_key].id
-    policy                   = lookup(each.value.backend_set, "policy", "ROUND_ROBIN") #  "ROUND_ROBIN" "LEAST_CONNECTIONS" "IP_HASH"
+    policy                   = lookup(each.value.backend_set, "policy", "FIVE_TUPLE") #  "TWO_TUPLE" "THREE_TUPLE" "FIVE_TUPLE"
 
     #Optional
     ip_version         = lookup(each.value.backend_set, "ip_version", null)
@@ -76,8 +76,7 @@ resource "oci_network_load_balancer_backend" "backend" {
     }
 
     #Required
-    backendset_name          = oci_network_load_balancer_backend_set.backend_set["${each.value.lb_key}_${each.value.bs_key}"].name
-    ip_address               = each.value.backend.ip_address
+    backend_set_name          = oci_network_load_balancer_backend_set.backend_set["${each.value.lb_key}_${each.value.bs_key}"].name
     network_load_balancer_id = oci_network_load_balancer_network_load_balancer.network_load_balancer[each.value.lb_key].id
     port                     = each.value.backend.port
 
@@ -87,7 +86,7 @@ resource "oci_network_load_balancer_backend" "backend" {
     is_drain   = lookup(each.value.backend, "is_drain", null)
     is_offline = lookup(each.value.backend, "is_offline", null)
     name       = lookup(each.value.backend, "name", null)
-    target_id  = oci_cloud_guard_target.test_target.id      # TODO
+    target_id  = lookup(each.value.backend, "target_id", null)
     weight     = lookup(each.value.backend, "weight", null)
 }
 
@@ -111,5 +110,5 @@ resource "oci_network_load_balancer_listener" "listener" {
     protocol                 = lookup(each.value.listener, "protocol", "HTTP") # "HTTP" "HTTP2" "TCP"
 
     #Optional
-    ip_version = each.value.listener.ip_version
+    ip_version = lookup(each.value.listener, "ip_version", null)
 }
