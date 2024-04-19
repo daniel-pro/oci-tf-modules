@@ -10,10 +10,4 @@ resource "oci_database_pluggable_database" "pluggable_database" {
     pdb_admin_password                 = lookup(each.value, "pdb_admin_password", null)
     should_pdb_admin_account_be_locked = lookup(each.value, "should_pdb_admin_account_be_locked", null)
     tde_wallet_password                = lookup(each.value, "tde_wallet_password", null)
-
-  # Default is 20m
-  timeouts {
-    create = "2h"
-    delete = "2h"
-  }
 }
