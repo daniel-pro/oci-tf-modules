@@ -1,7 +1,3 @@
-output "iam_compartment_all_input_attributes" {
-  description = "all attributes of created compartments"
-  value       = { for k, v in var.compartments : k => v }
-}
 
 output "compartment_id" {
   description = "ID of the just created compartment"
