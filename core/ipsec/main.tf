@@ -88,4 +88,7 @@ data "oci_core_ipsec_connection_tunnels" "ipsec_connection_tunnels" {
   }
   #Required
   ipsec_id = oci_core_ipsec.ipsec_connection[each.value.ipsec_key].id
+  depends_on = [ 
+    oci_core_ipsec.ipsec_connection 
+  ]
 }
