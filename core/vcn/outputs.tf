@@ -36,10 +36,6 @@ output "subnet_all_attributes" {
   description = "all attributes of created vcn"
   value       = { for k, v in oci_core_subnet.vcn_subnet : k => v }
 }
-output "var_subnets" {
-  description = "debug subnets var"
-  value       = { for k, v in var.subnets : k => v }
-}
 output "security_list_id" {
   value = try(oci_core_security_list.security_list[*].id, null)
 }
