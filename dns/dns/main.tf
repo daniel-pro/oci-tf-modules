@@ -98,10 +98,13 @@ resource "oci_dns_resolver" "dns_resolver" {
         source_endpoint_name = rules.value.source_endpoint_name
 
         #Optional
-        client_address_conditions = lookup(each.value, "client_address_conditions", null)
-        qname_cover_conditions = lookup(each.value, "qname_cover_conditions", null)
+        client_address_conditions = lookup(rules.value, "client_address_conditions", null)
+        qname_cover_conditions = lookup(rules.value, "qname_cover_conditions", null)
       }
     }
+  depends_on = [
+    oci_dns_resolver_endpoint.dns_resolver_endpoint
+  ]
 }
 
 resource "oci_dns_resolver_endpoint" "dns_resolver_endpoint" {
