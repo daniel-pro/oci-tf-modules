@@ -30,6 +30,7 @@ module "oas_compute_instance" {
 
   create_domain    = var.create_domain
   assign_public_ip = var.assign_public_ip
+  boot_backup_policy = var.boot_backup_policy
 }
 
 output "instance_public_ip" {

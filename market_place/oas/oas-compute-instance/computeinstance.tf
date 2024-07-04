@@ -1,7 +1,10 @@
 locals {
   is_flex_shape     = (var.instance_shape == "VM.Standard.E4.Flex") || (var.instance_shape == "VM.Standard.E3.Flex")
   flex_shape_config = local.is_flex_shape ? [{ "ocpus" : var.ocpus, "memory_in_gbs" : var.memory_in_gbs, "baseline_ocpu_utilization": try(var.baseline_ocpu_utilization, null) }] : []
+  default_backup_policies = { for i in data.oci_core_volume_backup_policies.default_backup_policies.volume_backup_policies : i.display_name => i.id }
 }
+
+data "oci_core_volume_backup_policies" "default_backup_policies" {}
 
 data "cloudinit_config" "oas_cloud_init" {
   gzip          = "true"
@@ -65,6 +68,14 @@ resource "oci_core_instance" "OAS_MP_instance" {
 
   preserve_boot_volume = false
 
+}
+
+# Assign a backup policy to instance's boot volume
+
+resource "oci_core_volume_backup_policy_assignment" "boot_volume_backup_policy" {
+  count = can(var.boot_backup_policy) ? 1 : 0  
+  asset_id  = oci_core_instance.OAS_MP_instance.boot_volume_id
+  policy_id = length(regexall("gold|silver|bronze", var.boot_backup_policy)) > 0 ? local.default_backup_policies[var.boot_backup_policy] : var.boot_backup_policy
 }
 
 output "vm_public_ip" {

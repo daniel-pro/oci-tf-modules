@@ -92,3 +92,7 @@ variable "oas_rcu_schema_password" {
 variable "baseline_ocpu_utilization" {
   type      = string
 }
+
+variable "boot_backup_policy" {
+  type      = string
+}

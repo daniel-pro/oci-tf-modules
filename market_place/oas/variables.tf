@@ -145,3 +145,7 @@ variable "oas_rcu_schema_password" {
   default     = ""
   description = "Schema password"
 }
+
+variable "boot_backup_policy" {
+  type      = string
+}
