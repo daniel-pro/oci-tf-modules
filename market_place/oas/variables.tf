@@ -149,3 +149,8 @@ variable "oas_rcu_schema_password" {
 variable "boot_backup_policy" {
   type      = string
 }
+
+variable "nsg_ids" {
+  type    = list
+  default = [] 
+}

@@ -59,6 +59,7 @@ resource "oci_core_instance" "OAS_MP_instance" {
   create_vnic_details {
     assign_public_ip = var.assign_public_ip
     subnet_id        = var.subnet_id
+    nsg_ids          = can(var.nsg_ids) ? var.nsg_ids : null
   }
 
   metadata = {

@@ -96,3 +96,8 @@ variable "baseline_ocpu_utilization" {
 variable "boot_backup_policy" {
   type      = string
 }
+
+variable "nsg_ids" {
+  type    = list
+  default = [] 
+}

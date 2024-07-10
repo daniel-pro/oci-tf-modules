@@ -28,9 +28,11 @@ module "oas_compute_instance" {
   oas_rcu_schema_prefix   = var.oas_rcu_schema_prefix
   oas_rcu_schema_password = var.oas_rcu_schema_password
 
-  create_domain    = var.create_domain
-  assign_public_ip = var.assign_public_ip
-  boot_backup_policy = var.boot_backup_policy
+  create_domain           = var.create_domain
+  assign_public_ip        = var.assign_public_ip
+  boot_backup_policy      = var.boot_backup_policy
+
+  nsg_ids                 = var.nsg_ids
 }
 
 output "instance_public_ip" {
