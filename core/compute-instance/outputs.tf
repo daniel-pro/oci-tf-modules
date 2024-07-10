@@ -7,4 +7,3 @@ output "instance_all_input_attributes" {
   description = "all input attributes of created compute instances"
   value       = { for k, v in var.compute_instances : k => v }
 }
-

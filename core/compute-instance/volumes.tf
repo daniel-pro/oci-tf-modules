@@ -78,7 +78,36 @@ resource "oci_core_volume_attachment" "volume_attachment" {
 
 }
 
+resource "oci_core_volume_backup_policy_assignment" "vg_volume_backup_policy_assignment" {
+  for_each = { for k in flatten([
+    for key, vg in var.volume_groups : [
+      for key_bp, volume_group in (can(vg.backup_policy_id) ? vg.backup_policy_id : [] ) : {
+        vg_key       = key
+        bp_key       = vg.backup_policy_id[key_bp]
+      }
+    ]
+    ]) : "${k.vg_key}_${k.bp_key}" => k
+  }
+  #Required
+  asset_id = oci_core_volume_group.volume_group[each.value.vg_key].id
+  policy_id = each.value.bp_key
+}
 
+
+resource "oci_core_volume_backup_policy_assignment" "vol_volume_backup_policy_assignment" {
+  for_each = { for k in flatten([
+    for key, vol in var.block_volumes : [
+      for key_bp, block_volume in (can(vol.backup_policy_id) ? vol.backup_policy_id : []) : {
+        vol_key      = key
+        bp_key       = vol.backup_policy_id[key_bp]
+      }
+    ]
+    ]) : "${k.vol_key}_${k.bp_key}" => k
+  }
+  #Required
+  asset_id = oci_core_volume.volume[each.value.vol_key].id
+  policy_id = each.value.bp_key
+}
 
 resource "oci_core_volume_group" "volume_group" {
   for_each = var.volume_groups
@@ -92,7 +121,7 @@ resource "oci_core_volume_group" "volume_group" {
   }
 
   #Optional
-  backup_policy_id = lookup(each.value, "backup_policy_id", null)
+#  backup_policy_id = lookup(each.value, "backup_policy_id", null)
   freeform_tags    = lookup(each.value, "freeform_tags", null)
   defined_tags     = lookup(each.value, "defined_tags", null)
   display_name     = lookup(each.value, "name", each.key)
