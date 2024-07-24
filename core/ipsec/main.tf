@@ -71,8 +71,45 @@ resource "oci_core_ipsec_connection_tunnel_management" "ipsec_connection_tunnel"
       oracle_traffic_selector = lookup(encryption_domain_config.value, "oracle_traffic_selector", null)
     }
   }
+
+   dynamic "dpd_config" {
+    for_each = { for key, value in each.value.tunnel : key => value if key == "dpd_config" }
+    #Optional
+    content {
+      dpd_mode            = lookup(dpd_config.value, "dpd_mode", "INITIATE_AND_RESPOND")
+      dpd_timeout_in_sec  = lookup(dpd_config.value, "dpd_timeout_in_sec", "20")
+    }
+  }
+
   shared_secret = lookup(each.value.tunnel, "shared_secret", null)
   ike_version   = lookup(each.value.tunnel, "ike_version", null)
+  nat_translation_enabled = lookup(each.value.tunnel, "nat_translation_enabled", "AUTO")
+  oracle_can_initiate = lookup(each.value.tunnel, "oracle_can_initiate", "INITIATOR_OR_RESPONDER")
+
+   dynamic "phase_one_details" {
+    for_each = { for key, value in each.value.tunnel : key => value if key == "phase_one_details" }
+    #Optional
+    content {
+      custom_authentication_algorithm  = lookup(phase_one_details.value, "custom_authentication_algorithm", "SHA2_384")
+      custom_dh_group  = lookup(phase_one_details.value, "custom_dh_group", "GROUP20")
+      custom_encryption_algorithm  = lookup(phase_one_details.value, "custom_encryption_algorithm", "AES_256_CBC")
+      is_custom_phase_one_config  = lookup(phase_one_details.value, "is_custom_phase_one_config", "true")
+      lifetime  = lookup(phase_one_details.value, "lifetime", "28800")
+    }
+  }
+
+   dynamic "phase_two_details" {
+    for_each = { for key, value in each.value.tunnel : key => value if key == "phase_two_details" }
+    #Optional
+    content {
+      custom_authentication_algorithm  = lookup(phase_two_details.value, "custom_authentication_algorithm", null)
+      dh_group  = lookup(phase_two_details.value, "dh_group", "GROUP5")
+      custom_encryption_algorithm  = lookup(phase_two_details.value, "custom_encryption_algorithm", "AES_256_GCM")
+      is_custom_phase_two_config  = lookup(phase_two_details.value, "is_custom_phase_two_config", "true")
+      is_pfs_enabled = lookup(phase_two_details.value, "is_pfs_enabled", "true")
+      lifetime  = lookup(phase_two_details.value, "lifetime", "3600")
+    }
+  }
 }
 
 data "oci_core_ipsec_connection_tunnels" "ipsec_connection_tunnels" {
