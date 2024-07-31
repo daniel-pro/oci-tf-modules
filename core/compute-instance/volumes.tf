@@ -45,6 +45,18 @@ resource "oci_core_volume" "volume" {
   size_in_gbs         = each.value.size_in_gbs
   freeform_tags       = lookup(each.value, "freeform_tags", null)
   defined_tags        = lookup(each.value, "defined_tags", null)
+  vpus_per_gb         = lookup(each.value, "vpus_per_gb", null)
+  
+  dynamic "autotune_policies" {
+    for_each = { for key, value in each.value : key => value if key == "autotune_policies" }
+    content {
+        #Required
+        autotune_type   = autotune_policies.value.autotune_type
+
+        #Optional
+        max_vpus_per_gb = autotune_policies.value.max_vpus_per_gb
+    }
+  }
   dynamic "block_volume_replicas" {
     for_each = can(each.value.replicas) ? each.value.replicas : {}
     content {
