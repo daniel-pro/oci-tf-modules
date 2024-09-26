@@ -8,7 +8,7 @@ resource "oci_core_instance" "instance" {
     if var.enabled
   }
   # for_each             = var.disabled == true ? {} : var.compute_instances
-  availability_domain  = each.value.availability_domain #can(each.value.ad_number) == false ? element(local.ADs, index(keys(var.compute_instances), each.key)) : element(local.ADs, each.value.ad_number - 1)
+  availability_domain  = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
   compartment_id       = each.value.compartment_id
   display_name         = lookup(each.value, "name", each.key)
   extended_metadata    = lookup(each.value, "extended_metadata", null)
@@ -69,6 +69,9 @@ resource "oci_core_instance" "instance" {
 
   timeouts {
     create = lookup(each.value, "instance_timeout", null)
+  }
+  lifecycle {
+    ignore_changes = [defined_tags]
   }
 }
 
