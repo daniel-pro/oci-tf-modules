@@ -73,20 +73,30 @@ resource "oci_core_volume" "volume" {
 # Volume Attachment
 ####################
 resource "oci_core_volume_attachment" "volume_attachment" {
-  for_each        = var.block_volumes
+#  for_each  = var.block_volumes
+  for_each = { for k in flatten([
+    for key, bv in var.block_volumes : [
+      for instance_name in (can(bv.instance_names_to_attach_to) ? bv.instance_names_to_attach_to : [] ) : {
+        bv_key                     = key
+        instance_name_to_attach_to = instance_name
+        block_volume               = bv
+      }
+    ]
+    ]) : "${k.bv_key}_${k.instance_name_to_attach_to}" => k
+  }
   attachment_type = lookup(each.value, "attachment_type", "paravirtualized")
   instance_id     = oci_core_instance.instance[each.value.instance_name_to_attach_to].id
-  volume_id       = oci_core_volume.volume[each.key].id
-  use_chap        = lookup(each.value, "use_chap", null)
+  volume_id       = oci_core_volume.volume[each.value.bv_key].id
+  use_chap        = lookup(each.value.block_volume, "use_chap", null)
 
   #Optional
-  device = lookup(each.value, "device", null)
-  display_name =  lookup(each.value, "display_name", each.key)
-  encryption_in_transit_type = lookup(each.value, "encryption_in_transit_type", null)
-  is_agent_auto_iscsi_login_enabled = lookup(each.value, "is_agent_auto_iscsi_login_enabled", null)
-  is_pv_encryption_in_transit_enabled = lookup(each.value, "is_pv_encryption_in_transit_enabled", null)
-  is_read_only = lookup(each.value, "is_read_only", null)
-  is_shareable = lookup(each.value, "is_shareable", null)
+  device = lookup(each.value.block_volume, "device", null)
+  display_name =  lookup(each.value.block_volume, "display_name", each.key)
+  encryption_in_transit_type = lookup(each.value.block_volume, "encryption_in_transit_type", null)
+  is_agent_auto_iscsi_login_enabled = lookup(each.value.block_volume, "is_agent_auto_iscsi_login_enabled", null)
+  is_pv_encryption_in_transit_enabled = lookup(each.value.block_volume, "is_pv_encryption_in_transit_enabled", null)
+  is_read_only = lookup(each.value.block_volume, "is_read_only", null)
+  is_shareable = lookup(each.value.block_volume, "is_shareable", null)
 
 }
 

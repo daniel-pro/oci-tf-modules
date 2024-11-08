@@ -48,8 +48,6 @@ resource "oci_core_instance" "instance" {
       skip_source_dest_check = lookup(create_vnic_details.value, "skip_source_dest_check", false)
       subnet_id              = create_vnic_details.value.subnet_id
       nsg_ids                = lookup(create_vnic_details.value, "nsg_ids", null)
-      freeform_tags          = lookup(create_vnic_details.value, "freeform_tags", lookup(each.value, "freeform_tags", null))
-      defined_tags           = lookup(create_vnic_details.value, "defined_tags", lookup(each.value, "defined_tags", null))
     }
   }
 
