@@ -101,7 +101,7 @@ resource "oci_load_balancer_backend_set" "backend_set" {
     content {
       #Optional
       certificate_ids                   = lookup(ssl_configuration.value, "certificate_ids", null)
-      certificate_name                  = lookup(ssl_configuration.value, "certificate_name", null)
+      certificate_name                  = can(oci_load_balancer_certificate.certificate[lookup(ssl_configuration.value, "certificate_name", "null")].certificate_name) ?  oci_load_balancer_certificate.certificate[ssl_configuration.certificate_name].certificate_name : null
       cipher_suite_name                 = lookup(ssl_configuration.value, "cipher_suite_name", null)
       protocols                         = lookup(ssl_configuration.value, "protocols", null)
       server_order_preference           = lookup(ssl_configuration.value, "server_order_preference", null)
@@ -201,7 +201,7 @@ resource "oci_load_balancer_listener" "listener" {
     for_each = { for key, value in each.value.listener : key => value if key == "ssl_configuration" }
     content {
       #Optional
-      certificate_name                  = lookup(ssl_configuration.value, "certificate_name", null)
+      certificate_name                  = can(oci_load_balancer_certificate.certificate[lookup(ssl_configuration.value, "certificate_name", "null")].certificate_name) ?  oci_load_balancer_certificate.certificate[lookup(ssl_configuration.value, "certificate_name", null)].certificate_name : null
       certificate_ids                   = lookup(ssl_configuration.value, "certificate_ids", null)
       cipher_suite_name                 = lookup(ssl_configuration.value, "cipher_suite_name", null)
       protocols                         = lookup(ssl_configuration.value, "protocols", null)
@@ -211,9 +211,6 @@ resource "oci_load_balancer_listener" "listener" {
       verify_peer_certificate           = lookup(ssl_configuration.value, "verify_peer_certificate", false)
     }
   }
-  depends_on = [
-    oci_load_balancer_certificate.certificate
-  ]
 }
 
 
