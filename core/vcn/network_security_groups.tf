@@ -32,8 +32,8 @@ resource "oci_core_network_security_group_security_rule" "network_security_group
   source           = lookup(each.value.secrule, "source_type", null) == "NETWORK_SECURITY_GROUP" ? oci_core_network_security_group.network_security_group[each.value.secrule.source].id : lookup(each.value.secrule, "source", null)
   source_type      = lookup(each.value.secrule, "source", null) != null ? lookup(each.value.secrule, "source_type", "CIDR_BLOCK") : null
   stateless        = lookup(each.value.secrule, "stateless", null)
-  destination      = lookup(each.value.secrule, "destination", null)
-  destination_type = lookup(each.value.secrule, "destination_type", null)
+  destination           = lookup(each.value.secrule, "destination_type", null) == "NETWORK_SECURITY_GROUP" ? oci_core_network_security_group.network_security_group[each.value.secrule.destination].id : lookup(each.value.secrule, "destination", null)
+  destination_type      = lookup(each.value.secrule, "destination", null) != null ? lookup(each.value.secrule, "destination_type", "CIDR_BLOCK") : null
 
   dynamic "tcp_options" {
     for_each = lookup(each.value.secrule, "tcp_options", [])
