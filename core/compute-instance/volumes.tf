@@ -39,7 +39,7 @@ resource "oci_core_volume_backup_policy_assignment" "volume_backup_policy" {
 #########
 resource "oci_core_volume" "volume" {
   for_each            = var.block_volumes
-  availability_domain = oci_core_instance.instance[each.value.instance_name_to_attach_to].availability_domain
+  availability_domain = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
   compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
   display_name        = lookup(each.value, "name", each.key)
   size_in_gbs         = each.value.size_in_gbs
