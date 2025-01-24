@@ -1,6 +1,9 @@
 # oci-tf-modules
 
 ## Breaking Changes
+- **v1.0.21**: 
+    - **module**: load_balancer/load-balancer
+    - **description**: the `items` attribute in `load_balancer_rule_set` variable has been introduced and has replaced the items_* attributes, so that we can handle multiple items in the same rule_set.
 - **v1.0.18**: 
     - **module**: core/compute-instance
     - **description**: the `instance_name_to_attach_to` attribute in `oci_core_volume_attachment` variable has changed name - `instance_names_to_attach_to` - and datatype, from `string` to `list` to permit multiple volume attachments, so shared block volumes.

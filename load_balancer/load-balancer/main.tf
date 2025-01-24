@@ -226,44 +226,47 @@ resource "oci_load_balancer_rule_set" "load_balancer_rule_set" {
       ]) : "${k.lb_key}_${k.rs_key}" => k
     }
     #Required
-    items {
-        #Required
-        action = each.value.rule_set.items_action
+    dynamic "items" {
+    for_each = each.value.rule_set.items
+      content {
+          #Required
+          action = items.value.action
 
-        #Optional
-        allowed_methods = lookup(each.value.rule_set, "allowed_methods", [])
-        are_invalid_characters_allowed = lookup(each.value.rule_set, "are_invalid_characters_allowed", null)
+          #Optional
+          allowed_methods = lookup(items.value, "allowed_methods", [])
+          are_invalid_characters_allowed = lookup(items.value, "are_invalid_characters_allowed", null)
 
-        dynamic "conditions" {
-          for_each = { for key, value in each.value.rule_set : key => value if key == "conditions" }
-          content {
-            #Required
-            attribute_name = conditions.value.attribute_name
-            attribute_value = conditions.value.attribute_value
-
-            #Optional
-            operator = lookup(conditions.value, "operator", null)
-          }
-        }
-        description = lookup(each.value.rule_set, "description", null)
-        header = lookup(each.value.rule_set, "header", null)
-        http_large_header_size_in_kb = lookup(each.value.rule_set, "http_large_header_size_in_kb", null)
-        prefix = lookup(each.value.rule_set, "prefix", null)
-        dynamic "redirect_uri" {
-            for_each = { for key, value in each.value.rule_set : key => value if key == "redirect_uri" }
+          dynamic "conditions" {
+            for_each = { for key, value in items.value : key => value if key == "conditions" }
             content {
+              #Required
+              attribute_name = conditions.value.attribute_name
+              attribute_value = conditions.value.attribute_value
+
               #Optional
-              host = lookup(redirect_uri.value, "host", "{host}")
-              path = lookup(redirect_uri.value, "path", "/{path}")
-              port = lookup(redirect_uri.value, "port", "{port}")
-              protocol = lookup(redirect_uri.value, "protocol", "{protocol}")
-              query = lookup(redirect_uri.value, "query", "?{query}")
+              operator = lookup(conditions.value, "operator", null)
             }
-        }
-        response_code = lookup(each.value.rule_set, "response_code", "302")
-        status_code = lookup(each.value.rule_set, "status_code", null)
-        suffix = lookup(each.value.rule_set, "suffix", null)
-        value = lookup(each.value.rule_set, "value", null)
+          }
+          description = lookup(items.value, "description", null)
+          header = lookup(items.value, "header", null)
+          http_large_header_size_in_kb = lookup(items.value, "http_large_header_size_in_kb", null)
+          prefix = lookup(items.value, "prefix", null)
+          dynamic "redirect_uri" {
+              for_each = { for key, value in items.value : key => value if key == "redirect_uri" }
+              content {
+                #Optional
+                host = lookup(redirect_uri.value, "host", "{host}")
+                path = lookup(redirect_uri.value, "path", "/{path}")
+                port = lookup(redirect_uri.value, "port", "{port}")
+                protocol = lookup(redirect_uri.value, "protocol", "{protocol}")
+                query = lookup(redirect_uri.value, "query", "?{query}")
+              }
+          }
+          response_code = lookup(items.value, "response_code", "302")
+          status_code = lookup(items.value, "status_code", null)
+          suffix = lookup(items.value, "suffix", null)
+          value = lookup(items.value, "value", null)
+      }
     }
     load_balancer_id = oci_load_balancer_load_balancer.load_balancer[each.value.lb_key].id
     name = lookup(each.value.rule_set, "name", each.value.rs_key)
