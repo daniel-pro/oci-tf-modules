@@ -20,7 +20,7 @@ resource "oci_database_autonomous_database" "autonomous_database" {
     compute_model = lookup(each.value, "compute_model", null)
     cpu_core_count = lookup(each.value, "cpu_core_count", null)
     dynamic customer_contacts {
-        for_each = { for key, value in each.value : key => value if key == "customer_contacts" }
+        for_each = lookup(each.value, "customer_contacts", {})
         content {
             #Optional
             email = lookup(customer_contacts.value, "email", null)
@@ -32,7 +32,7 @@ resource "oci_database_autonomous_database" "autonomous_database" {
     database_edition = lookup(each.value, "database_edition", null)
     db_name =  lookup(each.value, "db_name", each.key)
     dynamic db_tools_details {
-        for_each = { for key, value in each.value : key => value if key == "db_tools_details" }
+        for_each = lookup(each.value, "db_tools_details", {})
         content {
             #Required
             name = lookup(db_tools_details.value, "name", null)
@@ -44,12 +44,12 @@ resource "oci_database_autonomous_database" "autonomous_database" {
         }
     }
     db_version = lookup(each.value, "db_version", null)
-    db_workload = lookup(each.value, "db_workload", null)
+    db_workload = lookup(each.value, "db_workload", null) # OLTP DW APEX AJD
     defined_tags = lookup(each.value, "defined_tags", null)
     disaster_recovery_type = lookup(each.value, "disaster_recovery_type", null)
     display_name = lookup(each.value, "display_name", each.key)
     dynamic encryption_key {
-        for_each = { for key, value in each.value : key => value if key == "encryption_key" }
+        for_each = lookup(each.value, "encryption_key", {})
         content {
             #Optional
             arn_role = lookup(each.encryption_key, "arn_role", null)
@@ -92,7 +92,7 @@ resource "oci_database_autonomous_database" "autonomous_database" {
     refreshable_mode = lookup(each.value, "refreshable_mode", null)
     resource_pool_leader_id = lookup(each.value, "resource_pool_leader_id", null)
     dynamic resource_pool_summary {
-        for_each = { for key, value in each.value : key => value if key == "resource_pool_summary" }
+        for_each = lookup(each.value, "resource_pool_summary", {})
         content {        
             #Optional
             is_disabled = lookup(resource_pool_summary.value, "is_disabled", null)
@@ -100,7 +100,7 @@ resource "oci_database_autonomous_database" "autonomous_database" {
         }
     }
     dynamic scheduled_operations {
-        for_each = { for key, value in each.value : key => value if key == "scheduled_operations" }
+        for_each = lookup(each.value, "scheduled_operations", {})
         content {        
             #Required
             day_of_week {
@@ -108,8 +108,8 @@ resource "oci_database_autonomous_database" "autonomous_database" {
                 name = lookup(scheduled_operations.value, "day_of_week_name", null)
             }
             #Optional
-            scheduled_start_time = lookup(scheduled_operations.value, "start_time", null)
-            scheduled_stop_time = lookup(scheduled_operations.value, "stop_time", null)
+            scheduled_start_time = lookup(scheduled_operations.value, "scheduled_start_time", null)
+            scheduled_stop_time = lookup(scheduled_operations.value, "scheduled_stop_time", null)
         }
     }
     secret_id = lookup(each.value, "secret_id", null)
