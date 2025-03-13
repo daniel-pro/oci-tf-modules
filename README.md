@@ -1,7 +1,6 @@
 # oci-tf-modules
 
-## Breaking
- Changes
+## Breaking Changes
 - **v1.0.24**: 
     - **module**: load_balancer/load-balancer
     - **description**: the `routing_policy` attribute in `load_balancers` variable has been introduced and now it's mandatory. In case it's not needed it can be defined empty, like this: `routing_policy = {}`
