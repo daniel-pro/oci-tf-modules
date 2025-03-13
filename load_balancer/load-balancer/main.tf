@@ -272,6 +272,38 @@ resource "oci_load_balancer_rule_set" "load_balancer_rule_set" {
     name = lookup(each.value.rule_set, "name", each.value.rs_key)
 }
 
+resource "oci_load_balancer_load_balancer_routing_policy" "load_balancer_routing_policy" {
+    for_each = { for k in flatten([
+      for key, lb in var.load_balancers : [
+        for key_rp, routing_policy in lb.routing_policies : {
+          lb_key   = key
+          rp_key = key_rp
+          routing_policy = routing_policy
+        }
+      ]
+      ]) : "${k.lb_key}_${k.rp_key}" => k
+    }
+    #Required
+    condition_language_version = lookup(each.value.routing_policy, "condition_language_version", "V1")
+    load_balancer_id = oci_load_balancer_load_balancer.load_balancer[each.value.lb_key].id
+    name = lookup(each.value.routing_policy, "name", each.value.rp_key)
+
+    dynamic rules {
+      for_each = each.value.routing_policy.rules
+        #Required
+      content {
+        actions {
+            #Required
+            name = lookup(rules.value, "actions_name", "FORWARD_TO_BACKENDSET")
+
+            #Optional
+            backend_set_name = can(rules.value.backend_set_name) ? oci_load_balancer_backend_set.backend_set[rules.value.backend_set_name].name : null
+        }
+        condition = rules.value.condition
+        name = lookup(rules.value, "name", rules.key)
+      }
+    }
+}
 
 /* WIP
 
