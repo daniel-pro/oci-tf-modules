@@ -5,7 +5,7 @@ data "oci_identity_availability_domains" "ad" {
 resource "oci_database_cloud_exadata_infrastructure" "cloud_exadata_infrastructure" {
   for_each = var.cloud_exadata_infrastructures
   #Required
-  availability_domain = edata.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
+  availability_domain = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
   compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
   display_name        = each.value.name
   shape               = each.value.shape
