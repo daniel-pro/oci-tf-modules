@@ -1,6 +1,11 @@
 # oci-tf-modules
 
 ## Breaking Changes
+- **v1.0.26**: 
+    - **module**: database/db_system
+    - **description**: the `availability_domain` attribute in `oci_database_db_system` variable now should be set to 1 or 2 or 3 without specifying anything else.
+    - **module**: database/exacs
+    - **description**: the `availability_domain` attribute in `oci_database_cloud_exadata_infrastructure` variable now should be set to 1 or 2 or 3 without specifying anything else.
 - **v1.0.24**: 
     - **module**: load_balancer/load-balancer
     - **description**: the `routing_policy` attribute in `load_balancers` variable has been introduced and now it's mandatory. In case it's not needed it can be defined empty, like this: `routing_policy = {}`
