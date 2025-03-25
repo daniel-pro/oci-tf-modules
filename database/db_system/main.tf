@@ -1,7 +1,11 @@
+data "oci_identity_availability_domains" "ad" {
+  compartment_id = var.compartment_id
+}
+
 resource "oci_database_db_system" "db_system" {
   for_each = var.db_systems
     #Required
-    availability_domain = each.value.availability_domain
+    availability_domain = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
     compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
 
     hostname = lookup(each.value, "hostname", each.key)
