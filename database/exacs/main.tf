@@ -145,14 +145,14 @@ resource "oci_database_db_home" "db_home" {
   database_software_image_id = lookup(each.value, "database_software_image_id", null)
   db_system_id               = lookup(each.value, "db_system_id", null)
   db_version                 = lookup(each.value, "db_version", null)
-  defined_tags           = lookup(each.value, "defined_tags", null)
-  display_name           = lookup(each.value, "name", each.key)
-  freeform_tags          = lookup(each.value, "freeform_tags", null)
-  is_desupported_version = lookup(each.value, "is_desupported_version", null)
-  kms_key_id             = lookup(each.value, "kms_key_id", null)
-  kms_key_version_id     = lookup(each.value, "kms_key_version_id", null)
-  source                 = lookup(each.value, "source", "NONE") #The source of database: NONE for creating a new database. DB_BACKUP for creating a new database by restoring from a database backup. VM_CLUSTER_NEW for creating a database for VM Cluster.
-  vm_cluster_id          = oci_database_cloud_vm_cluster.cloud_vm_cluster[each.value.vm_cluster_name].id
+  defined_tags               = lookup(each.value, "defined_tags", null)
+  display_name               = lookup(each.value, "name", each.key)
+  freeform_tags              = lookup(each.value, "freeform_tags", null)
+  is_desupported_version     = lookup(each.value, "is_desupported_version", null)
+  kms_key_id                 = lookup(each.value, "kms_key_id", null)
+  kms_key_version_id         = lookup(each.value, "kms_key_version_id", null)
+  source                     = lookup(each.value, "source", "NONE") #The source of database: NONE for creating a new database. DB_BACKUP for creating a new database by restoring from a database backup. VM_CLUSTER_NEW for creating a database for VM Cluster.
+  vm_cluster_id              = can(each.value.vm_cluster_id) ? each.value.vm_cluster_id : oci_database_cloud_vm_cluster.cloud_vm_cluster[each.value.vm_cluster_name].id 
 }
 
 resource "oci_database_database" "database" {
