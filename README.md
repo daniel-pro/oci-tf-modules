@@ -1,5 +1,9 @@
 # oci-tf-modules
-
+## New Features
+- **v1.0.29**: 
+    - **module**: resource_scheduler/schedule
+    - **description**: module to manage the resource scehduler.
+    
 ## Breaking Changes
 - **v1.0.26**: 
     - **module**: database/db_system
