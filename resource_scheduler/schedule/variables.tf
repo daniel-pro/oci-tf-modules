@@ -10,7 +10,7 @@ variable "schedules" {
   default     = {}
 }
 
-variable "create_policies {
+variable "create_policies" {
   description = "Create policies flag"
   type = bool
   default = true
