@@ -48,7 +48,6 @@ resource "oci_resource_scheduler_schedule" "schedule" {
 }
 
 resource "oci_identity_policy" "policy" {
-  for_each = 
   for_each = {
     for k, v in var.schedules : k => v
     if var.create_policies
