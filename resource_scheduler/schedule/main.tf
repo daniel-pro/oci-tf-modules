@@ -48,8 +48,11 @@ resource "oci_resource_scheduler_schedule" "schedule" {
 }
 
 resource "oci_identity_policy" "policy" {
-  for_each = var.schedules
-
+  for_each = 
+  for_each = {
+    for k, v in var.schedules : k => v
+    if var.create_policies
+  }
   compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
 
   description = "Resource Scheduler Policy for ${each.key}"

@@ -9,3 +9,9 @@ variable "schedules" {
   type        = any
   default     = {}
 }
+
+variable "create_policies {
+  description = "Create policies flag"
+  type = bool
+  default = true
+}
