@@ -12,7 +12,7 @@ resource "oci_identity_tag" "identity_tag" {
   #Required
   description      = each.value.description
   name             = lookup(each.value, "name", each.key)
-  tag_namespace_id = oci_identity_tag_namespace.tag_namespace[each.value.tag_namespace_name].id
+  tag_namespace_id = lookup(each.value, "tag_namespace_id", oci_identity_tag_namespace.tag_namespace[each.value.tag_namespace_name].id)
 
   # Optional
   is_cost_tracking = lookup(each.value, "is_cost_tracking", false)
