@@ -194,7 +194,7 @@ resource "oci_load_balancer_listener" "listener" {
   }
   hostname_names = [for host in lookup(each.value.listener, "hostnames", []) : oci_load_balancer_hostname.hostname["${each.value.lb_key}_${host}"].name]
 
-  #    routing_policy_name = can(each.value.listener.routing_policy_name) ? oci_load_balancer_load_balancer_routing_policy.load_balancer_routing_policy[each.value.listener.routing_policy_name].name : null
+  routing_policy_name = can(each.value.listener.routing_policy_name) ? oci_load_balancer_load_balancer_routing_policy.load_balancer_routing_policy[each.value.listener.routing_policy_name].name : null
   rule_set_names = [for ruleset in lookup(each.value.listener, "rule_set_names", []) : oci_load_balancer_rule_set.load_balancer_rule_set["${each.value.lb_key}_${ruleset}"].name ]
 
   dynamic "ssl_configuration" {
