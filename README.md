@@ -2,7 +2,7 @@
 ## New Features
 - **v1.0.29**: 
     - **module**: resource_scheduler/schedule
-    - **description**: module to manage the resource scehduler.
+    - **description**: module to manage the resource scheduler.
     
 ## Breaking Changes
 - **v1.0.26**: 
