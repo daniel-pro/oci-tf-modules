@@ -21,7 +21,7 @@ resource "oci_core_drg_attachment" "drg_vcn_attachment" {
 
   network_details {
     id             = oci_core_vcn.vcn.id                                                                     # required
-    route_table_id = can(each.value.vcn_transit_routing_rt_id) ? each.value.vcn_transit_routing_rt_id : null # optional. Only needed when using VCN Transit Routing or Network Appliance service chaining
+    route_table_id = can(each.value.route_table_id) ? each.value.route_table_id : can(each.value.route_table) ? oci_core_route_table.attachment_route_table[each.value.route_table].id : null
     type           = "VCN"                                                                                   # Required
   }
 
