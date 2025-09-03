@@ -19,6 +19,18 @@ resource "oci_dns_zone" "dns_zone" {
 
     #Optional
     defined_tags = lookup(each.value, "defined_tags", null)
+
+    dynamic external_downstreams {
+      for_each = lookup(each.value, "external_masters", {})
+      content {
+        #Required
+        address = external_downstreams.value.address
+
+        #Optional
+        port =  lookup(external_downstreams.value, "port", null)
+        tsig_key_id = lookup(external_downstreams.value, "tsig_key_id", can(external_downstreams.value.tsig_key) ? oci_dns_tsig_key.tsig_key[tsig_key] : null)
+      }
+    }
     dynamic external_masters {
         for_each = lookup(each.value, "external_masters", {})
         content {
