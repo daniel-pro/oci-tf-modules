@@ -39,3 +39,21 @@ variable "dns_resolver_endpoints" {
   type        = any
   default     = {}
 }
+
+variable "steering_policies" {
+  description = "DNS Steering Policies"
+  type        = any
+  default     = {}
+}
+
+variable "http_monitors" {
+  description = "DNS Steering Policies HTTP Monitors"
+  type        = any
+  default     = {}
+}
+
+variable "http_probes" {
+  description = "DNS Steering Policies HTTP Probes"
+  type        = any
+  default     = {}
+}

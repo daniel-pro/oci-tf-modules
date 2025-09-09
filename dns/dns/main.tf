@@ -19,18 +19,6 @@ resource "oci_dns_zone" "dns_zone" {
 
     #Optional
     defined_tags = lookup(each.value, "defined_tags", null)
-
-    dynamic external_downstreams {
-      for_each = lookup(each.value, "external_masters", {})
-      content {
-        #Required
-        address = external_downstreams.value.address
-
-        #Optional
-        port =  lookup(external_downstreams.value, "port", null)
-        tsig_key_id = lookup(external_downstreams.value, "tsig_key_id", can(external_downstreams.value.tsig_key) ? oci_dns_tsig_key.tsig_key[tsig_key] : null)
-      }
-    }
     dynamic external_masters {
         for_each = lookup(each.value, "external_masters", {})
         content {
@@ -44,7 +32,7 @@ resource "oci_dns_zone" "dns_zone" {
     }
     freeform_tags = lookup(each.value, "freeform_tags", null)
     scope = lookup(each.value, "scope", null)
-    view_id = can(each.value.view_name) ? oci_dns_view.dns_view[each.value.view_name].id : null
+    view_id = lookup(each.value, "view_id", can(each.value.view_name) ? oci_dns_view.dns_view[each.value.view_name].id : null)
 }
 
 resource "oci_dns_tsig_key" "tsig_key" {
@@ -65,8 +53,8 @@ resource "oci_dns_rrset" "dns_rrset" {
     #Required
     domain = each.value.domain
     rtype = each.value.rtype
-    zone_name_or_id = oci_dns_zone.dns_zone[each.value.zone_name].id
-
+    zone_name_or_id = oci_dns_zone.dns_zone[each.value.zone_name_or_id].id
+    #zone_name_or_id = each.value.zone_name_or_id
     #Optional
     compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
     dynamic items {
@@ -125,7 +113,7 @@ resource "oci_dns_resolver_endpoint" "dns_resolver_endpoint" {
     is_forwarding = each.value.is_forwarding
     is_listening = each.value.is_listening
     name = lookup(each.value, "name", each.key)
-    resolver_id = oci_dns_resolver.dns_resolver[each.value.resolver_name].id
+    resolver_id = each.value.resolver_id
     subnet_id = each.value.subnet_id
     scope = lookup(each.value, "scope", "PRIVATE")
 
@@ -134,4 +122,128 @@ resource "oci_dns_resolver_endpoint" "dns_resolver_endpoint" {
     forwarding_address = lookup(each.value, "forwarding_address", null)
     listening_address = lookup(each.value, "listening_address", null)
     nsg_ids = lookup(each.value, "nsg_ids", null)
+}
+
+resource "oci_dns_steering_policy" "steering_policy" {
+  for_each = var.steering_policies
+    #Required
+    compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
+    display_name   = lookup(each.value, "name", each.key)
+    template       = each.value.template
+
+    #Optional
+    dynamic answers {
+      for_each = lookup(each.value, "answers", {})
+      content {
+        #Required
+        name  = lookup(answers.value, "name", answers.key)
+        rdata = answers.value.rdata
+        rtype = answers.value.rtype
+
+        #Optional
+        is_disabled = lookup(answers.value, "is_disabled", null)
+        pool        = lookup(answers.value, "pool", null)       
+      }
+
+    }
+
+    freeform_tags           = lookup(each.value, "freeform_tags", null)
+    #health_check_monitor_id = can(each.value.health_check_monitor_id) ? each.value.health_check_monitor_id : can(each.value.http_health_check_monitor) ? oci_health_checks_http_monitor.http_monitor[each.value.http_health_check_monitor].id : can(each.value.ping_health_check_monitor) ? oci_health_checks_ping_monitor.health_checks_ping_monitor[each.value.ping_health_check_monitor].id : null
+    health_check_monitor_id = can(each.value.health_check_monitor_id) ? each.value.health_check_monitor_id : can(each.value.http_health_check_monitor) ? oci_health_checks_http_monitor.http_monitor[each.value.http_health_check_monitor].id :  null
+
+    dynamic rules {
+      for_each = lookup(each.value, "rules", {})
+      content {
+        #Required
+        rule_type = rules.value.rule_type
+
+        #Optional
+        dynamic cases {
+          for_each = lookup(rules.value, "cases", {})
+          content {
+            #Optional
+            answer_data {
+              #Optional
+              answer_condition = lookup(answer_data.value, "answer_condition", null)
+              should_keep      = lookup(answer_data.value, "should_keep", null)
+              value            = lookup(answer_data.value, "value", null)
+            }
+
+            case_condition = lookup(cases.value, "case_condition")            
+          }
+        }
+
+        dynamic default_answer_data {
+          for_each = lookup(rules.value, "default_answer_data", {})
+          content {
+            #Optional
+            answer_condition = lookup(default_answer_data.value, "answer_condition")
+            should_keep      = lookup(default_answer_data.value, "should_keep")   
+            value            = lookup(default_answer_data.value, "value", null)         
+          }
+        }
+        default_count = lookup(rules.value, "default_count", null)
+        description = lookup(rules.value, "description", null)
+
+      }
+    }
+    ttl = lookup(each.value, "ttl" , null)
+}
+
+
+resource "oci_health_checks_http_monitor" "http_monitor" {
+  for_each = var.http_monitors
+    #Required
+    compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
+    display_name = lookup(each.value, "name", each.key)
+    interval_in_seconds = each.value.interval_in_seconds
+    protocol = each.value.protocol
+    targets = each.value.targets
+
+    #Optional
+    defined_tags = lookup(each.value, "defined_tags", null)
+    freeform_tags =  lookup(each.value, "freeform_tags", null)
+    headers = lookup(each.value, "headers", null)
+    is_enabled = lookup(each.value, "is_enabled", null)
+    method = lookup(each.value, "method", null)
+    path = lookup(each.value, "path", null)
+    port = lookup(each.value, "port", null)
+    timeout_in_seconds = lookup(each.value, "timeout_in_seconds", null)
+    vantage_point_names = lookup(each.value, "vantage_point_names", null)
+}
+
+resource "oci_health_checks_http_probe" "http_probe" {
+  for_each = var.http_probes 
+    #Required
+    compartment_id = lookup(each.value, "compartment_id", var.compartment_id)
+    protocol = each.value.protocol
+    targets = each.value.targets
+
+    #Optional
+    headers = lookup(each.value, "headers", null)
+    method = lookup(each.value, "method", null)
+    path = lookup(each.value, "path", null)
+    port = lookup(each.value, "port", null)
+    timeout_in_seconds = lookup(each.value, "timeout_in_seconds", null)
+    vantage_point_names = lookup(each.value, "vantage_point_names", null)
+}
+
+resource "oci_dns_steering_policy_attachment" "steering_policy_attachment" {
+  for_each = { for k in flatten([
+    for key, sp in var.steering_policies : [
+      for dns_zone in sp.dns_zones : {
+        sp_key          = key
+        dns_zone        = dns_zone
+        steering_policy = sp
+      }
+    ]
+    ]) : "${k.sp_key}_${k.dns_zone.name}" => k
+  }
+    #Required
+    domain_name = each.value.dns_zone.domain_name
+    steering_policy_id = oci_dns_steering_policy.steering_policy[lookup(each.value.steering_policy, "name", each.value.sp_key)].id
+    zone_id = oci_dns_zone.dns_zone[each.value.dns_zone.name].id
+
+    #Optional
+    display_name = "${lookup(each.value.steering_policy, "name", each.value.sp_key)}-${each.value.dns_zone.name}"
 }
