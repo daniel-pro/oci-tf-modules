@@ -34,11 +34,15 @@ resource "oci_database_db_system" "db_system" {
 
                     dynamic "backup_destination_details" {
                     for_each = { for key, value in db_backup_config.value : key => value if key == "backup_destination_details" }
-                    content {
-                        #Optional
-                        id   = lookup(backup_destination_details.value, "id", null)
-                        type = lookup(backup_destination_details.value, "type", null)
-                    }
+                        content {
+                            #Optional
+                            dbrs_policy_id = can(backup_destination_details.value.dbrs_policy_id) == true ? backup_destination_details.value.dbrs_policy_id : (
+                                can([for value in data.oci_recovery_protection_policies.protection_policies.protection_policy_collection : value if value.display_name == backup_destination_details.value.dbrs_policy_name].0.id) == true ? [for value in data.oci_recovery_protection_policies.protection_policies.protection_policy_collection : value if value.display_name == backup_destination_details.value.dbrs_policy_name].0.id : 
+                                can(oci_recovery_protection_policy.protection_policy[backup_destination_details.value.dbrs_policy_name]) == true ? oci_recovery_protection_policy.protection_policy[backup_destination_details.value.dbrs_policy_name].id : null)
+                            #dbrs_policy_id = lookup(backup_destination_details.value, "dbrs_policy_name", null) != null ? [for value in data.oci_recovery_protection_policies.protection_policies.protection_policy_collection.items : value if value.display_name == backup_destination_details.value.dbrs_policy_name].0.id : null
+                            id   = lookup(backup_destination_details.value, "id", null)
+                            type = lookup(backup_destination_details.value, "type", null)
+                        }
                     }
                     recovery_window_in_days = lookup(db_backup_config.value, "recovery_window_in_days", null)
                     run_immediate_full_backup = lookup(db_backup_config.value, "run_immediate_full_backup", null)
