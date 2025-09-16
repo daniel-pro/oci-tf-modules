@@ -110,7 +110,7 @@ resource "oci_core_vnic_attachment" "vnic_attachment" {
 
 resource "oci_core_public_ip" "paloalto_MP_instance_public_ip" {
   #for_each = {for key, value in data.oci_core_private_ips.paloalto_MP_private_ips.private_ips : value.display_name => value}
-  for_each = {for key, value in var.secondary_vnic_details : key => value if lookup(value , "assign_reserved_public_ip", false)}
+  for_each = {for key, value in merge(var.vnic0_details,var.secondary_vnic_details) : key => value if lookup(value , "assign_reserved_public_ip", false)}
 
   compartment_id = var.compartment_id
   display_name   = join("-", [each.key, "pub-ip"])
@@ -149,7 +149,7 @@ resource "oci_core_private_ip" "public_vip_private_ip" {
   # subnet_id = lookup(each.value, "subnet_id", null)
   # vlan_id = lookup(each.value, "vlan_id", null)
   #vnic_id = data.oci_core_vnic_attachments.vnic_attachments.vnic_attachments[each.value.vnic_index].vnic_id
-  vnic_id = oci_core_vnic_attachment.vnic_attachment[each.value.vnic_name].id
+  vnic_id = oci_core_vnic_attachment.vnic_attachment[each.value.vnic_name].vnic_id
 }
 
 resource "oci_core_public_ip" "public_vip_public_ip" {
