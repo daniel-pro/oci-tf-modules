@@ -72,6 +72,9 @@ resource "oci_core_instance" "paloalto_MP_instance" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [ metadata ]
+  }
   metadata = {
     ssh_authorized_keys = var.ssh_authorized_keys
     #user_data           = local.user_data
@@ -149,7 +152,7 @@ resource "oci_core_private_ip" "public_vip_private_ip" {
   # subnet_id = lookup(each.value, "subnet_id", null)
   # vlan_id = lookup(each.value, "vlan_id", null)
   #vnic_id = data.oci_core_vnic_attachments.vnic_attachments.vnic_attachments[each.value.vnic_index].vnic_id
-  vnic_id = oci_core_vnic_attachment.vnic_attachment[each.value.vnic_name].id
+  vnic_id = oci_core_vnic_attachment.vnic_attachment[each.value.vnic_name].vnic_id
 }
 
 resource "oci_core_public_ip" "public_vip_public_ip" {
