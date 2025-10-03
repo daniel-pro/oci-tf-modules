@@ -1,5 +1,8 @@
 # oci-tf-modules
 ## New Features
+- **v1.0.31**: 
+    - **module**: identity/group
+    - **description**: module to manage the *group* resource for Default domain.
 - **v1.0.29**: 
     - **module**: resource_scheduler/schedule
     - **description**: module to manage the resource scheduler.
