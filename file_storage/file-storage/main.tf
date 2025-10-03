@@ -10,7 +10,7 @@ data "oci_file_storage_snapshot" "snapshot" {
 resource "oci_file_storage_file_system" "file_system" {
   for_each = var.file_systems
 
-  availability_domain = each.value.availability_domain
+  availability_domain = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
   compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
   display_name        = lookup(each.value, "name", each.key)
 
@@ -25,7 +25,7 @@ resource "oci_file_storage_file_system" "file_system" {
 resource "oci_file_storage_mount_target" "mount_target" {
   for_each = var.mount_targets
   #Required
-  availability_domain = each.value.availability_domain
+  availability_domain = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
   compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
   subnet_id           = each.value.subnet_id
 
@@ -42,7 +42,7 @@ resource "oci_file_storage_mount_target" "mount_target" {
 resource "oci_file_storage_filesystem_snapshot_policy" "filesystem_snapshot_policy" {
   for_each = var.snapshot_policies
   #Required
-  availability_domain = each.value.availability_domain
+  availability_domain = data.oci_identity_availability_domains.ad.availability_domains[each.value.availability_domain - 1].name
   compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
 
   #Optional
