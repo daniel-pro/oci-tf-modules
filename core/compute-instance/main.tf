@@ -23,6 +23,14 @@ resource "oci_core_instance" "instance" {
     baseline_ocpu_utilization = lookup(each.value.instance_shape_config, "baseline_ocpu_utilization", null)
   }
 
+  dynamic "licensing_configs" {
+    for_each = lookup(each.value, "licensing_configs", {})
+    content {
+      type         = lookup(licensing_configs.value, "type", null)
+      license_type = lookup(licensing_configs.value, "license_type", null)
+    }
+  }
+
   agent_config {
     are_all_plugins_disabled = false
     is_management_disabled   = false
