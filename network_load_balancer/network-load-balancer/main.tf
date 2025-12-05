@@ -46,7 +46,7 @@ resource "oci_network_load_balancer_backend_set" "backend_set" {
 
         #Optional
         dynamic "dns" {
-          for_each = { for key, value in each.value.backend_set : key => value if key == "dns" }
+          for_each = { for key, value in each.value.backend_set.health_checker : key => value if key == "dns" }
           content {
             #Required
             domain_name = lookup(dns.value, "domain_name", null)
