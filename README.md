@@ -1,5 +1,10 @@
 # oci-tf-modules
 ## New Features
+- **v1.0.32**: 
+    - **module**: market_place/paloalto
+    - **description**: module to manage the PaloAlto VM-Series Next-Generation Firewall from the Oracle Cloud Marketplace.
+    - **module**: database/recovery
+    - **description**: module to manage the Autonomous Recovery Service.
 - **v1.0.31**: 
     - **module**: identity/group
     - **description**: module to manage the *group* resource for Default domain.
@@ -8,6 +13,14 @@
     - **description**: module to manage the resource scheduler.
     
 ## Breaking Changes
+- **v1.0.32**: 
+    - **module**: core/compute-instance
+    - **description**: the `licensing_configs` attribute in `oci_core_instance` variable has been introduced to manage thelicensing model.
+    - **module**: database/db_system
+    - **description**: the `oci_recovery_protection_policy` resource has been added to manage the recovery protection policies for the DB Systems. 
+- **v1.0.31**: 
+    - **module**: file_storage/file-storage
+    - **description**: the `availability_domain` attribute in `oci_file_storage_file_system` variable now should be set to 1 or 2 or 3 without specifying anything else.
 - **v1.0.26**: 
     - **module**: database/db_system
     - **description**: the `availability_domain` attribute in `oci_database_db_system` variable now should be set to 1 or 2 or 3 without specifying anything else.
