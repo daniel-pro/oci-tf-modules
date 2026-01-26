@@ -1,0 +1,3 @@
+hostname=${fw_hostname}
+authcodes=${fw_authcode}
+op-command-modes=jumbo-frame
