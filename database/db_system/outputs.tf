@@ -13,3 +13,7 @@ output "oci_databases_on_all_db_systems" {
   description = "all dbs created during the DB system creation"
   value       = data.oci_database_databases.databases
 }
+
+output "oci_recovery_protection_policies" {
+  value       = data.oci_recovery_protection_policies.protection_policies
+}
