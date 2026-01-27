@@ -17,7 +17,9 @@
     - **module**: core/compute-instance
     - **description**: the `licensing_configs` attribute in `oci_core_instance` variable has been introduced to manage thelicensing model.
     - **module**: database/db_system
-    - **description**: the `oci_recovery_protection_policy` resource has been added to manage the recovery protection policies for the DB Systems. 
+    - **description**: the `oci_recovery_protection_policy` resource has been added to manage the recovery protection policies for the DB Systems.
+    - **module**: identity/group
+    - **description**: the outputs `group_id` and `group_ids` have been removed and replaced with standard `group_all_attributes` and `group_all_input_attributes`.
 - **v1.0.31**: 
     - **module**: file_storage/file-storage
     - **description**: the `availability_domain` attribute in `oci_file_storage_file_system` variable now should be set to 1 or 2 or 3 without specifying anything else.

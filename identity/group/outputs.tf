@@ -1,10 +1,9 @@
-
-output "group_id" {
-  description = "ID of the just created group"
-  value       = oci_identity_group.identity_group[keys(var.groups)[0]].id
+output "group_all_attributes" {
+  description = "all attributes of created identity groups"
+  value       = { for k, v in oci_identity_group.identity_group : k => v }
 }
 
-output "groups_ids" {
-  description = "IDs of the just created groups"
-  value       = [for c in oci_identity_group.identity_group[*] : { for k, v in c : k => v.id }]
+output "group_all_input_attributes" {
+  description = "all input attributes of created identity groups"
+  value       = { for k, v in var.groups : k => v }
 }
