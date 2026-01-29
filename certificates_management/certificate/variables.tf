@@ -14,8 +14,3 @@ variable "ca_bundles" {
   type        = any
   default     = {}
 }
-
-variable "certificate_key" {
-  description = "Certificate key"
-  type        = string
-}

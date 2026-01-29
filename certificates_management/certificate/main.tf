@@ -1,6 +1,8 @@
 resource "oci_certificates_management_certificate" "certificate" {
   for_each = var.certificates
 
+  ## From OCI docs: Importing certificates with Terraform isn't supported (https://docs.oracle.com/en-us/iaas/Content/certificates/known-issues.htm#importing-certificates-with-terraform)
+  ## --> our solution: https://mm.gitlab-pages.mmonline.cloud/infra/knowledgebase/terraform/known-issues/oci-certificate-imported/
   certificate_config {
     config_type     = "IMPORTED"
     cert_chain_pem  = each.value.cert_chain_pem
