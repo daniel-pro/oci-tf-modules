@@ -1,5 +1,8 @@
 # oci-tf-modules
 ## New Features
+- **v1.0.33**: 
+    - **module**: mysql_database/mysql-db-system
+    - **description**: module to manage the MySQL DB System.
 - **v1.0.32**: 
     - **module**: market_place/paloalto
     - **description**: module to manage the PaloAlto VM-Series Next-Generation Firewall from the Oracle Cloud Marketplace.
@@ -13,6 +16,9 @@
     - **description**: module to manage the resource scheduler.
     
 ## Breaking Changes
+- **v1.0.33**: 
+    - **module**: certificates_management/certificate
+    - **description**: the unused `certificate_key` variable has been removed
 - **v1.0.32**: 
     - **module**: core/compute-instance
     - **description**: the `licensing_configs` attribute in `oci_core_instance` variable has been introduced to manage thelicensing model.
