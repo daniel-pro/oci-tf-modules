@@ -128,3 +128,31 @@ resource "oci_file_storage_snapshot" "snapshot" {
   freeform_tags   = lookup(each.value, "freeform_tags", null)
   defined_tags    = lookup(each.value, "defined_tags", null)
 }
+
+resource "oci_file_storage_replication" "replication" {
+  for_each = var.replications
+  #Required
+  compartment_id      = lookup(each.value, "compartment_id", var.compartment_id)
+  source_id = oci_file_storage_file_system.file_system[each.value.source_id].id
+  target_id = oci_file_storage_file_system.file_system[each.value.target_id].id
+
+  #Optional
+  freeform_tags = lookup(each.value, "freeform_tags", null)
+  defined_tags  = lookup(each.value, "defined_tags", null)
+
+  display_name  = lookup(each.value, "name", each.key)
+
+  dynamic "locks" {
+    for_each = lookup(each.value, "locks", {})
+    content {
+      #Required
+      type = locks.value.type
+
+      #Optional
+      message             = lookup(locks.value, "message", null)
+      related_resource_id = lookup(locks.value, "related_resource_id", null)
+      time_created        = lookup(locks.value, "time_created", null)
+    }
+  }
+  replication_interval = lookup(each.value, "replication_interval", 15) # in minutes, must be >=15
+}

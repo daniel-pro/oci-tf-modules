@@ -26,3 +26,9 @@ variable "snapshots" {
   type        = any
   default     = {}
 }
+
+variable "replications" {
+  description = "Map of replications to be created"
+  type        = any
+  default     = {}
+}
