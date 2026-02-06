@@ -1,5 +1,8 @@
 # oci-tf-modules
 ## New Features
+- **v1.0.34**: 
+    - **module**: core/vcn
+    - **description**: oci_core_route_table.attachment_route_table resource has been added to manage drg route attachment route tables
 - **v1.0.33**: 
     - **module**: mysql_database/mysql-db-system
     - **description**: module to manage the MySQL DB System.
