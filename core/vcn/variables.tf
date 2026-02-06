@@ -194,6 +194,12 @@ variable "route_tables" {
   default     = {}
 }
 
+variable "attachment_route_tables" {
+  description = "List of attachment route tables - with their correspondent route rules"
+  type        = any
+  default     = {}
+}
+
 variable "default_route_table" {
   description = "Default route table variable - with its correspondent route rules"
   type        = any
