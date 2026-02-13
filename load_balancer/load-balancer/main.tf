@@ -177,7 +177,7 @@ resource "oci_load_balancer_listener" "listener" {
   #Required
   default_backend_set_name = oci_load_balancer_backend_set.backend_set["${each.value.lb_key}_${each.value.listener.default_backend_set_name}"].name
   load_balancer_id         = oci_load_balancer_load_balancer.load_balancer[each.value.lb_key].id
-  name                     = "${each.value.lb_key}_${each.value.lsnr_key}"
+  name                     = lookup(each.value.listener, "name", "${each.value.lb_key}_${each.value.lsnr_key}")
   port                     = each.value.listener.port
   protocol                 = lookup(each.value.listener, "protocol", "HTTP") # "HTTP" "HTTP2" "TCP"
 
